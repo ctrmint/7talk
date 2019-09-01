@@ -27,6 +27,7 @@ class DisplayTraceGauge(object):
         gauge height per data value.
         solid = changes inc, which in terns changes with the area under the graph is solid.
         graded = colour gradient introduced for plot points, also adds white for 90th percentile.
+        
 
     """
 
