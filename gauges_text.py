@@ -347,27 +347,9 @@ class LabelText(object):
         text_rect.centery = self.loc_y
         # draw the text onto the surface
         self.windowSurface.blit(text, (self.loc_x, self.loc_y))
-        return
+
 
 
 class DataText(LabelText):
-    """
-    tbc
-    """
     def __init__(self, name, wsurface, textstr, forecolour, backcolour, font, loc_x, loc_y):
-        self.name = name
-        self.windowSurface = wsurface
-        self.textstr = textstr
-        self.forecolour = forecolour
-        self.backcolour = backcolour
-        self.font = font
-        self.loc_x = loc_x
-        self.loc_y = loc_y
-        text = self.font.render(self.textstr, True, self.forecolour, self.backcolour)
-        text_rect = text.get_rect()
-        text_rect.centerx = self.loc_x
-        text_rect.centery = self.loc_y
-        # draw the text onto the surface
-        self.windowSurface.blit(text, (self.loc_x, self.loc_y))
-
-
+        super().__init__(name, wsurface, textstr, forecolour, backcolour, font, loc_x, loc_y)
