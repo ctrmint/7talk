@@ -51,6 +51,6 @@ def draw_screen_labels(windowSurface, labelFont, x, y, spacing):
 def list_data_text(windowSurface, datafont, x, y, spacing):
     list_of_data_txt = []
     for value in data_value_labels:
-        list_of_data_txt.append(DataText(value, windowSurface, "0000000", DARK_GREEN, TEXT_BG, datafont, x, y))
+        list_of_data_txt.append(DataText(value, windowSurface, "0000000", GREEN, TEXT_BG, datafont, x, y))
         y += spacing
     return list_of_data_txt
