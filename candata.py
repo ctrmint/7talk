@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
+# --------------------------------------------------------------------------------
+# CAN data class and various rx related code
+# --------------------------------------------------------------------------------
 from __future__ import print_function
 import can, sys
 import binascii
@@ -134,6 +137,11 @@ class Can_val(object):
         if Can_val.debug_print:
             self.print_debug()
         return
+
+    def __str__(self):
+        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
+                                                                        self.__dict__[item]) for item in self.__dict__))
+
 
 
 class Rpmval(Can_val):
