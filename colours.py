@@ -1,3 +1,6 @@
+# File describing colours used in the application.
+# Needs sorting out.
+
 # GENERAL COLOURS
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
