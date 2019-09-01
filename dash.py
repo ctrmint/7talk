@@ -65,8 +65,6 @@ def processing_loop(bus):
     draw_screen_borders(windowSurface)
     draw_screen_labels(windowSurface, labelFont, 3, 40, 30)
     list_of_data = list_data_text(windowSurface, dataFont, 180, 40, 30)
-    for item in list_of_data:
-        print(str(list_of_data[item]))
 
     # declare rpm txt instance and display 0000 value
     rpm_txt = SplitDataText("rpm", windowSurface, hack_font, rpm_fontsize, 0.9, ([GREEN, TEXT_BG]),
@@ -131,6 +129,8 @@ def processing_loop(bus):
             rpm_dial_gauge.data_arc(rpm_reading.rx_val)
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
+            for i in range(len(list_of_data)):
+                list_of_data[i].update(rpm_reading.rx_val)
 
         pygame.display.update()
         clock.tick(clock_val)

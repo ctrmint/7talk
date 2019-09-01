@@ -365,6 +365,8 @@ class LabelText(object):
         # draw the text onto the surface
         self.windowSurface.blit(text, (self.loc_x, self.loc_y))
 
+
+
     def __str__(self):
         return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
                                                                         self.__dict__[item]) for item in self.__dict__))
@@ -373,3 +375,15 @@ class LabelText(object):
 class DataText(LabelText):
     def __init__(self, name, wsurface, textstr, forecolour, backcolour, font, loc_x, loc_y):
         super().__init__(name, wsurface, textstr, forecolour, backcolour, font, loc_x, loc_y)
+
+
+    def update(self, new_data):
+        self.textstr = str(new_data)
+        text = self.font.render(self.textstr, True, self.forecolour, self.backcolour)
+        text_rect = text.get_rect()
+        text_rect.centerx = self.loc_x
+        text_rect.centery = self.loc_y
+        # draw the text onto the surface
+        self.windowSurface.blit(text, (self.loc_x, self.loc_y))
+
+
