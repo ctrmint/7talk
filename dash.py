@@ -65,7 +65,7 @@ def processing_loop(bus):
     draw_screen_borders(windowSurface)
     draw_screen_labels(windowSurface, labelFont, 3, 40, 30)
     list_of_data = list_data_text(windowSurface, dataFont, 180, 40, 30)
-    print(str(list_of_data[0].name))
+    print(str(list_of_data[0]))
 
     # declare rpm txt instance and display 0000 value
     rpm_txt = SplitDataText("rpm", windowSurface, hack_font, rpm_fontsize, 0.9, ([GREEN, TEXT_BG]),
