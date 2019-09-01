@@ -78,6 +78,10 @@ class DisplayTraceGauge(object):
         area.scroll(-1, 0)
         return
 
+    def __str__(self):
+        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
+                                                                        self.__dict__[item]) for item in self.__dict__))
+
 
 class DisplayDialGauge(object):
     """
@@ -186,6 +190,10 @@ class DisplayDialGauge(object):
                 pygame.draw.arc(self.surface, DARK_GREEN, self.reading_arc_square, start_rads,
                                 self.band_0_arc_end, self.reading_arc_thickness)
 
+    def __str__(self):
+        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
+                                                                        self.__dict__[item]) for item in self.__dict__))
+
 
 class DisplayBarGauge(object):
     """
@@ -248,6 +256,10 @@ class DisplayBarGauge(object):
         # Mask image
         pygame.draw.rect(self.windowsSurface, self.mask_colour, mask_rectangle)
         return
+
+    def __str__(self):
+        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
+                                                                        self.__dict__[item]) for item in self.__dict__))
 
 
 class SplitDataText(object):
@@ -317,6 +329,10 @@ class SplitDataText(object):
         self.update_msd(self.msd, self.lsd)
         return
 
+    def __str__(self):
+        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
+                                                                        self.__dict__[item]) for item in self.__dict__))
+
 
 class LabelText(object):
     """
@@ -349,9 +365,8 @@ class LabelText(object):
         self.windowSurface.blit(text, (self.loc_x, self.loc_y))
 
     def __str__(self):
-        return str(self.__class__) + '\n'+ '\n'.join(('{} = {}'.format(item,
-                                                                       self.__dict__[item]) for item in self.__dict__))
-
+        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
+                                                                        self.__dict__[item]) for item in self.__dict__))
 
 
 class DataText(LabelText):
