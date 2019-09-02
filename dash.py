@@ -96,7 +96,9 @@ def processing_loop(socket):
     demo_loop = False
     random_loop = False
     demo_rpm_val = 0
-    rpm_reading = Rpmval("rpm", 0)
+    
+
+    rpm_reading = Rpmval("rpm", 0)                                                                 # Declare RPM reading
 
     while keep_running:
         for event in pygame.event.get():
