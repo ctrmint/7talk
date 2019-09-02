@@ -3,7 +3,7 @@
 #
 # Notes,
 #   Needs to be setup via configuration file rather than importing in this manner.  This was a quick solution during dev
-#
+# .
 # -------------
 mybus = 'vcan0'
 bitrate = 500000
