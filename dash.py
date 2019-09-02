@@ -194,11 +194,10 @@ def processing_loop(stack):
 
 
 def main():
-    bus = SocketcanBus(channel='vcan0')
-    address = isotp.Address(isotp.AddressingMode.Normal_29bit, rxid=Rxid, txid=Txid)
-    stack = isotp.CanStack(bus, address=address, error_handler=isotp_error_handler)
-    processing_loop(stack)
-    return
+    s = isotp.socket()
+    s.set_opts(0x480, frame_txtime=0)  # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
+    s.bind("can0", isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=0x0cbe0111, txid=0x0cbe1101))
+    s.send(b'\x04\x00\x0d')
 
 
 if __name__ == '__main__':
