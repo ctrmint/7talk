@@ -1,4 +1,10 @@
-# Support parameters for 7 Dash display
+# -----------------------------------------
+# Supporting parameters for 7 Dash display
+#
+# Notes,
+#   Needs to be setup via configuration file rather than importing in this manner.  This was a quick solution during dev
+#
+# ------
 mybus = 'vcan0'
 bitrate = 500000
 bustype= 'socketcan'
