@@ -19,6 +19,7 @@
 import os, sys, time, datetime
 import random
 import can
+import isotp
 from dash_support import *
 from colours import *
 from gauges_text import *
@@ -68,7 +69,7 @@ def demo_rpm(demo_rpm_val):
     return demo_rpm_val
 
 
-def processing_loop(bus):
+def processing_loop(socket):
     table_collect = table_collect_start
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
@@ -172,10 +173,13 @@ def processing_loop(bus):
 
 def main():
     if not live:
-        bus = ''
+        pass
     else:
-        bus = can.interface.Bus(bustype=bustype, channel=mybus, bitrate=bitrate)
-    processing_loop(bus)
+        s = isotp.socket()
+        s.set_opts(0x480, frame_txtime=0) # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
+        s.bind(mybus, isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=Rxid, txid=Txid))
+
+    processing_loop(s)
     return
 
 

@@ -8,6 +8,8 @@
 mybus = 'vcan0'
 bitrate = 500000
 bustype= 'socketcan'
+Rxid = 0x0cbe0111
+Txid = 0x0cbe1101
 ret_count_val = 3
 #Event timers
 PollCAN_schedule = 10 # milliseconds
