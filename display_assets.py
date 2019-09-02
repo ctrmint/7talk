@@ -54,8 +54,3 @@ def list_data_text(windowSurface, datafont, x, y, spacing):
         list_of_data_txt.append(DataText(value, windowSurface, "00000", GREEN, TEXT_BG, datafont, x, y))
         y += spacing
     return list_of_data_txt
-
-def create_data_dict(data_value_labels):
-    data_dict = dict.fromkeys(data_value_labels, 0)
-    print(str(data_dict))
-    return data_dict

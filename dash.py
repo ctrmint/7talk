@@ -9,6 +9,13 @@
 # ---------------------------------------------------------------
 # Status: incomplete
 # ---------------------------------------------------------------
+# Notes,
+# ------
+# __Dictionaries__
+#       data_dict = dictionary of data excluding RPM, eg TPS Site : 10. Contents initially built from data_value_labels
+# __Lists__
+#       data_txt_as_list = list of instances of DataText, used to print data on the screen.
+
 import os, sys, time, datetime
 import random
 import can
@@ -64,7 +71,7 @@ def processing_loop(bus):
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
     draw_screen_labels(windowSurface, labelFont, 3, 40, 30)
-    list_of_data = list_data_text(windowSurface, dataFont, 160, 40, 30)
+    data_txt_as_list = list_data_text(windowSurface, dataFont, 160, 40, 30)
 
     # declare rpm txt instance and display 0000 value
     rpm_txt = SplitDataText("rpm", windowSurface, hack_font, rpm_fontsize, 0.9, ([GREEN, TEXT_BG]),
@@ -80,7 +87,7 @@ def processing_loop(bus):
     trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100, ([DARK_GREEN, BLACK]), (7800, 0), False, True)
 
     # create data dictionary
-    data_dict = create_data_dict(data_value_labels)
+    data_dict = dict.fromkeys(data_value_labels, 0)
 
     keep_running = True
     demo_loop = False
@@ -133,8 +140,15 @@ def processing_loop(bus):
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
 
-            for i in range(len(list_of_data)):
-                list_of_data[i].update(rpm_reading.rx_val)
+            #Update the data_dict
+            data_dict['TPS Site'] = (random.randint(1, 10))
+
+            # update main data table text values from  -----
+            for data in (data_dict.items()):
+                for i in range(len(data_txt_as_list)):
+                    if data_txt_as_list[i].name == data[0]:   # match name of dict item with instance name! and if match
+                       data_txt_as_list[i].update(data[1])    # update instance data, to update screen etc.
+            # ---------------------------------------------
 
         pygame.display.update()
         clock.tick(clock_val)
