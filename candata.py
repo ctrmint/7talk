@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 # --------------------------------------------------------------------------------
-# CAN data class and various rx related code
+# CAN data class and various rx related code.
 # --------------------------------------------------------------------------------
 from __future__ import print_function
 import can, sys

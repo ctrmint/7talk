@@ -352,7 +352,7 @@ class LabelText(object):
     def __init__(self, name, wsurface, textstr, forecolour, backcolour, font, loc_x, loc_y):
         self.name = name
         self.windowSurface = wsurface
-        self.textstr = str(textstr).ljust(10, " ")
+        self.textstr = str(textstr).ljust(5, " ")
         self.forecolour = forecolour
         self.backcolour = backcolour
         self.font = font
@@ -378,7 +378,7 @@ class DataText(LabelText):
 
 
     def update(self, new_data):
-        self.textstr = str(new_data).ljust(10, " ")
+        self.textstr = str(new_data).ljust(5, " ")
         text = self.font.render(self.textstr, True, self.forecolour, self.backcolour)
         text_rect = text.get_rect()
         text_rect.centerx = self.loc_x

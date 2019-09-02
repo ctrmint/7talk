@@ -64,7 +64,7 @@ def processing_loop(bus):
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
     draw_screen_labels(windowSurface, labelFont, 3, 40, 30)
-    list_of_data = list_data_text(windowSurface, dataFont, 180, 40, 30)
+    list_of_data = list_data_text(windowSurface, dataFont, 160, 40, 30)
 
     # declare rpm txt instance and display 0000 value
     rpm_txt = SplitDataText("rpm", windowSurface, hack_font, rpm_fontsize, 0.9, ([GREEN, TEXT_BG]),
@@ -78,6 +78,9 @@ def processing_loop(bus):
     rpm_dial_gauge = DisplayDialGauge(windowSurface, [330, 55, 325, 325], 2, GAUGE_BORDER_COLOUR)
 
     trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100, ([DARK_GREEN, BLACK]), (7800, 0), False, True)
+
+    # create data dictionary
+    data_dict = create_data_dict(data_value_labels)
 
     keep_running = True
     demo_loop = False
@@ -129,6 +132,7 @@ def processing_loop(bus):
             rpm_dial_gauge.data_arc(rpm_reading.rx_val)
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
+
             for i in range(len(list_of_data)):
                 list_of_data[i].update(rpm_reading.rx_val)
 

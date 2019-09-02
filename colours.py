@@ -1,5 +1,6 @@
 # File describing colours used in the application.
-# Needs sorting out.
+# Needs sorting out
+#
 
 # GENERAL COLOURS
 BLACK = (0, 0, 0)

@@ -30,7 +30,7 @@ LCD_font = "open24displayst"
 default_fontsize = 30
 rpm_fontsize = 70
 label_fontsize = 12
-data_fontsize = 12
+data_fontsize = 14
 
 # Display Labels & Locations.--------------------
 # Throttle Angle, Air Temp, Coolant Temp, Coolant fuel factor, Air Temp fuel factor, Throttle Angle Increasing,
