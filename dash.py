@@ -174,7 +174,7 @@ def main():
     if not live:
         bus = ''
     else:
-        bus = can.interface.Bus(bustype='socketcan', channel=mybus, bitrate=500000)
+        bus = can.interface.Bus(bustype=bustype, channel=mybus, bitrate=bitrate)
     processing_loop(bus)
     return
 

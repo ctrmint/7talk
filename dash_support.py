@@ -1,5 +1,7 @@
 # Support parameters for 7 Dash display
 mybus = 'vcan0'
+bitrate = 500000
+bustype= 'socketcan'
 ret_count_val = 3
 #Event timers
 PollCAN_schedule = 10 # milliseconds
