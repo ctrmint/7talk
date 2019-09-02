@@ -143,23 +143,10 @@ class Can_val(object):
                                                                         self.__dict__[item]) for item in self.__dict__))
 
 
-
 class Rpmval(Can_val):
     """ Rpm value class"""
     def __init__(self, name, rx_val):
         super(Rpmval, self).__init__(name, rx_val)
-
-
-class CoolantTemp(Can_val):
-    """ Coolant Temperature class"""
-    def __init__(self, name, rx_val):
-        super(CoolantTemp, self).__init__(name, rx_val)
-
-
-class TPSSite(Can_val):
-    """ TPS Site class"""
-    def __init__(self, name, rx_val):
-        super(TPSSite, self).__init__(name, rx_val)
 
 
 def process_can_message(msgtoprocess):

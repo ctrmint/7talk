@@ -86,17 +86,18 @@ def processing_loop(socket):
                               BLACK, ([10, 15]), ([2500, 6600, 7500]))
 
     rpm_dial_gauge = DisplayDialGauge(windowSurface, [330, 55, 325, 325], 2, GAUGE_BORDER_COLOUR)
-
     trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100, ([DARK_GREEN, BLACK]), (7800, 0), False, True)
 
-    # create data dictionary
-    data_dict = dict.fromkeys(data_value_labels, 0)
+    # 2nd method data storage
+    data_readings = []
+    for item in data_value_labels:
+        data_readings.append(Can_val(item, 0))
+
 
     keep_running = True
     demo_loop = False
     random_loop = False
     demo_rpm_val = 0
-    
 
     rpm_reading = Rpmval("rpm", 0)                                                                 # Declare RPM reading
 
@@ -124,12 +125,10 @@ def processing_loop(socket):
                             table_collect = table_collect_start                   # reset timer used to lower frequency
                         table_collect -= 1
                     else:                                                            # testing loop used to display data
-                        if table_collect == 0:                                           # again check frequency counter
-                            data_dict['TPS Site'] = (random.randint(1, 16))                     # test update, TPS Site
-                            data_dict['Air Temp'] = (random.randint(1, 30))                      # test update, Air Temp
-                            data_dict['Coolant Temp'] = (random.randint(1, 110))             # test update, Coolant Temp
-                            data_dict['Battery Volt'] = (round(random.uniform(1, 13), 2))    # test update, Battery Volt
-                            data_dict['Throttle Angle'] = (round(random.uniform(1, 5.00), 3))
+                        if table_collect == 0:  # again check frequency counter
+                            data_readings[0].set_change(random.randint(1, 16))
+                            data_readings[1].set_change(random.randint(1, 16))
+                            data_readings[2].set_change(random.randint(1, 16))
                             table_collect = table_collect_start                                     #  reset the counter
                         table_collect -= 1                                                            #  dec the counter
 
@@ -161,12 +160,12 @@ def processing_loop(socket):
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
 
-            # update main data table text values from  -----
-            for data in (data_dict.items()):
-                for i in range(len(data_txt_as_list)):
-                    if data_txt_as_list[i].name == data[0]:   # match name of dict item with instance name! and if match
-                       data_txt_as_list[i].update(data[1])    # update instance data, to update screen etc.
-            # ---------------------------------------------
+            # Update data table with readings held within data_readings list, made up of Can_val instances.
+            for i in range(len(data_readings)):                                      # loop through instances
+                for j in range(len(data_txt_as_list)):                               # loop through text names
+                    if data_readings[i].name == data_txt_as_list[j].name:            # look for same 'name' and if match
+                        data_txt_as_list[j].update(data_readings[i].rx_val)          # update displayed text with rx_val
+            # -------------------------------------------------------------
 
         pygame.display.update()
         clock.tick(clock_val)
@@ -174,13 +173,11 @@ def processing_loop(socket):
 
 
 def main():
-    if not live:
-        pass
-    else:
+    s = 0
+    if live:
         s = isotp.socket()
-        s.set_opts(0x480, frame_txtime=0) # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
+        s.set_opts(0x480, frame_txtime=0)                                           # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
         s.bind(mybus, isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=Rxid, txid=Txid))
-
     processing_loop(s)
     return
 
