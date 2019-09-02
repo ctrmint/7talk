@@ -158,9 +158,6 @@ def processing_loop(bus):
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
 
-            #Update the data_dict
-            #data_dict['TPS Site'] = (random.randint(1, 10))
-
             # update main data table text values from  -----
             for data in (data_dict.items()):
                 for i in range(len(data_txt_as_list)):
