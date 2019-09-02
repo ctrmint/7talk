@@ -52,11 +52,14 @@ for font in range(len(available_fonts)):
         lcd_fontpath = pygame.font.match_font(available_fonts[font])
     if available_fonts[font] == 'hack':
         hack_font = pygame.font.match_font(available_fonts[font])
+        rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
+        labelFont = pygame.font.Font(hack_font, label_fontsize)
+        dataFont = pygame.font.Font(hack_font, data_fontsize)
 
 # set up fonts
-rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
-labelFont = pygame.font.Font(hack_font, label_fontsize)
-dataFont = pygame.font.Font(hack_font, data_fontsize)
+#rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
+#labelFont = pygame.font.Font(hack_font, label_fontsize)
+#dataFont = pygame.font.Font(hack_font, data_fontsize)
 # setup clock
 clock = pygame.time.Clock()
 # ------------------------------------------------------------------
@@ -68,6 +71,7 @@ def demo_rpm(demo_rpm_val):
     else:
         demo_rpm_val = 0
     return demo_rpm_val
+
 
 
 def processing_loop(socket):
