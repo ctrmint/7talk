@@ -266,7 +266,7 @@ class DisplayBarGauge(object):
 class DisplayTellTale(object):
     """
     Industry standard tell-tales.
-    
+
     """
     def __init__(self, name):
         self.name = name

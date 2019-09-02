@@ -111,24 +111,24 @@ def processing_loop(bus):
                     rpm_reading.set_change(random.randint(1, max_rpm))
 
                 else:
-                    if live:                    # collect RPM Data via can at base frequency set by pygame clock
+                    if live:                           # collect RPM Data via can at base frequency set by pygame clock
                         rough_str, hex_id, data_hex = receive_can_frame(bus)
                         rpm_value = process_can_message(rough_str)
                         rpm_reading.set_change(rpm_value)
 
                         if table_collect == 0:                                  # collect table data, at lower frequency
                             # poll for table data from CAN here.                                    # collect goes here
-                            table_collect = table_collect_start                  # reset timer used to lower frequency
+                            table_collect = table_collect_start                   # reset timer used to lower frequency
                         table_collect -= 1
-                    else:                                                           # testing loop used to display data
-                        if table_collect == 0:                                      # again check frequency counter
-                            data_dict['TPS Site'] = (random.randint(1, 16))                  # test update, TPS Site
-                            data_dict['Air Temp'] = (random.randint(1, 30))                  # test update, Air Temp
+                    else:                                                            # testing loop used to display data
+                        if table_collect == 0:                                           # again check frequency counter
+                            data_dict['TPS Site'] = (random.randint(1, 16))                     # test update, TPS Site
+                            data_dict['Air Temp'] = (random.randint(1, 30))                      # test update, Air Temp
                             data_dict['Coolant Temp'] = (random.randint(1, 110))             # test update, Coolant Temp
                             data_dict['Battery Volt'] = (round(random.uniform(1, 13), 2))    # test update, Battery Volt
                             data_dict['Throttle Angle'] = (round(random.uniform(1, 5.00), 3))
-                            table_collect = table_collect_start                              #  reset the counter
-                        table_collect -= 1                                                   #  dec the counter
+                            table_collect = table_collect_start                                     #  reset the counter
+                        table_collect -= 1                                                            #  dec the counter
 
             elif event.type == KEYDOWN:
                 demo_loop = False
