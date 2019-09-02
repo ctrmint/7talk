@@ -70,7 +70,16 @@ def demo_rpm(demo_rpm_val):
 
 
 def processing_loop(socket):
-    table_collect = table_collect_start
+    # Control parameters
+    keep_running = True                                         # ensures continued operation, set false in flow to stop
+    demo_loop = False                                           # runs demo data, set through keyboard
+    random_loop = False                                         # runs random data, set through keyboard
+    demo_rpm_val = 0                                            # initial value for demo data.
+
+    table_collect = table_collect_start                         # set counter(frequency) to fetch table data
+                                                                # freq = table_collect/pygame clock
+
+
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
     draw_screen_labels(windowSurface, labelFont, 3, 40, 30)
@@ -88,18 +97,12 @@ def processing_loop(socket):
     rpm_dial_gauge = DisplayDialGauge(windowSurface, [330, 55, 325, 325], 2, GAUGE_BORDER_COLOUR)
     trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100, ([DARK_GREEN, BLACK]), (7800, 0), False, True)
 
-    # 2nd method data storage
-    data_readings = []
-    for item in data_value_labels:
-        data_readings.append(Can_val(item, 0))
 
+    data_readings = []                                                 # Data storage list
+    for item in data_value_labels:                                     # loop creating instances of Can_val
+        data_readings.append(Can_val(item, 0))                         # based on supplied labels from data_value_labels
 
-    keep_running = True
-    demo_loop = False
-    random_loop = False
-    demo_rpm_val = 0
-
-    rpm_reading = Rpmval("rpm", 0)                                                                 # Declare RPM reading
+    rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
 
     while keep_running:
         for event in pygame.event.get():
@@ -160,7 +163,7 @@ def processing_loop(socket):
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
 
-            # Update data table with readings held within data_readings list, made up of Can_val instances.
+            #    Update data table with readings held within data_readings list, made up of Can_val instances.
             for i in range(len(data_readings)):                                      # loop through instances
                 for j in range(len(data_txt_as_list)):                               # loop through text names
                     if data_readings[i].name == data_txt_as_list[j].name:            # look for same 'name' and if match
