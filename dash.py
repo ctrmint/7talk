@@ -55,11 +55,13 @@ for font in range(len(available_fonts)):
         rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
         labelFont = pygame.font.Font(hack_font, label_fontsize)
         dataFont = pygame.font.Font(hack_font, data_fontsize)
+    else:
+        if available_fonts[font] == 'freemono':
+            hack_font = pygame.font.match_font(available_fonts[font])
+            rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
+            labelFont = pygame.font.Font(hack_font, label_fontsize)
+            dataFont = pygame.font.Font(hack_font, data_fontsize)
 
-# set up fonts
-#rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
-#labelFont = pygame.font.Font(hack_font, label_fontsize)
-#dataFont = pygame.font.Font(hack_font, data_fontsize)
 # setup clock
 clock = pygame.time.Clock()
 # ------------------------------------------------------------------
