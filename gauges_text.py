@@ -263,6 +263,19 @@ class DisplayBarGauge(object):
                                                                         self.__dict__[item]) for item in self.__dict__))
 
 
+class DisplayTellTale(object):
+    """
+    Industry standard tell-tales.
+    
+    """
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
+                                                                        self.__dict__[item]) for item in self.__dict__))
+
+
 class SplitDataText(object):
     """
         Text class for displaying large text inside the center of a gauge.
