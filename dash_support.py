@@ -63,6 +63,9 @@ RPM_COVER_RECT_START_HEIGHT = 15
 RPM_COVER_RECT_END_HEIGHT = 54
 
 #KNOWN REQUESTS
+
+Serial_number = bytearray(b'\x04\x00\x0d')
+
 #KNOWN RESPONSES
 known_response = {"RPM" : ["03.81.00.00.00.00.f8.7c"]}
 

@@ -74,6 +74,11 @@ def demo_rpm(demo_rpm_val):
         demo_rpm_val = 0
     return demo_rpm_val
 
+def simple_request(socket, request):
+    socket.send(request)
+    response = (socket.recv())
+    print(strresponse)
+    return response
 
 
 def processing_loop(socket):
