@@ -20,6 +20,7 @@
 import os, sys, time, datetime
 import random
 import can
+from can.interfaces.socketcan import SocketcanBus
 import isotp
 from dash_support import *
 from colours import *
@@ -74,14 +75,15 @@ def demo_rpm(demo_rpm_val):
         demo_rpm_val = 0
     return demo_rpm_val
 
-def simple_request(socket, request):
-    socket.send(request)
-    response = (socket.recv())
-    print(strresponse)
-    return response
+def isotp_error_handler(error):
+   logging.warning('IsoTp error happened : %s - %s' % (error.__class__.__name__, str(error)))
+
+def simple_request(s):
+    s.send(b'This is an interesting test message to send')
+    return
 
 
-def processing_loop(socket):
+def processing_loop(stack):
     # Control parameters
     keep_running = True                                         # ensures continued operation, set false in flow to stop
     demo_loop = False                                           # runs demo data, set through keyboard
@@ -115,6 +117,9 @@ def processing_loop(socket):
         data_readings.append(Can_val(item, 0))                         # based on supplied labels from data_value_labels
 
     rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
+
+    simple_request(stack)
+
 
     while keep_running:
         for event in pygame.event.get():
@@ -189,12 +194,10 @@ def processing_loop(socket):
 
 
 def main():
-    s = 0
-    if live:
-        s = isotp.socket()
-        s.set_opts(0x480, frame_txtime=0)                                           # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
-        s.bind(mybus, isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=Rxid, txid=Txid))
-    processing_loop(s)
+    bus = SocketcanBus(channel='vcan0')
+    address = isotp.Address(isotp.AddressingMode.Normal_29bit, rxid=Rxid, txid=Txid)
+    stack = isotp.CanStack(bus, address=address, error_handler=isotp_error_handler)
+    processing_loop(stack)
     return
 
 
