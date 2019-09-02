@@ -1,20 +1,25 @@
-# -----------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+# Caterham 7 Dash
+# Revision  :   0.1
+# Author    :   Mark Rodman
+# ----------------------------------------------------------------------------------------------------------------------
 # Supporting parameters for 7 Dash display
 #
 # Notes,
 #   Needs to be setup via configuration file rather than importing in this manner.  This was a quick solution during dev
-# .
-# -------------
+# ----------------------------------------------------------------------------------------------------------------------
+
+#CAN / ISOTP COMMS PARAMETERS
 mybus = 'vcan0'
 bitrate = 500000
 bustype= 'socketcan'
 Rxid = 0x0cbe0111
 Txid = 0x0cbe1101
 ret_count_val = 3
-#Event timers
+
+#EVENT TIMERS AND PYGAME CLOCK
 PollCAN_schedule = 10 # milliseconds
 table_collect_start = 30
-#CLOCK
 clock_val = 60
 
 #CLASS STUFF
@@ -35,22 +40,17 @@ title_start_Y = 35
 title_end_X = display_width
 title_end_Y = title_start_Y
 
-# FONT NAMES
+# FONT NAMES AND SIZES
 LCD_font = "open24displayst"
-# FONT Size
 default_fontsize = 30
 rpm_fontsize = 70
 label_fontsize = 12
 data_fontsize = 14
 
 # Display Labels & Locations.--------------------
-# Throttle Angle, Air Temp, Coolant Temp, Coolant fuel factor, Air Temp fuel factor, Throttle Angle Increasing,
-# TPS Fuel + Trim, TPS Speed Ignition + Trim, TPS Site, Battery Voltage, Battery Voltage compensation
-
 data_value_labels = ["Throttle Angle", "Air Temp", "Coolant Temp", "Coolant fuel factor", "Air Temp fuel factor",
                      "Throttle Angle Inc", "TPS Fuel+Trim", "TPS Speed Ign+Trim", "TPS Site",
                      "Battery Volt", "Battery Volt comp"]
-
 
 #RPM Display stuff
 max_rpm = 7700

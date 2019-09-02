@@ -1,20 +1,21 @@
 #! /usr/bin/env python3
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # Caterham 7 Dash
 # Revision  :   0.1
 # Author    :   Mark Rodman
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # Reads information from the MBE ECU for display on screen via
 # pygame.
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # Status: incomplete
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # Notes,
 # ------
 # __Dictionaries__
 #       data_dict = dictionary of data excluding RPM, eg TPS Site : 10. Contents initially built from data_value_labels
 # __Lists__
 #       data_txt_as_list = list of instances of DataText, used to print data on the screen.
+# ----------------------------------------------------------------------------------------------------------------------
 
 import os, sys, time, datetime
 import random
@@ -127,6 +128,7 @@ def processing_loop(socket):
                             # poll for table data from CAN here.                                    # collect goes here
                             table_collect = table_collect_start                   # reset timer used to lower frequency
                         table_collect -= 1
+
                     else:                                                            # testing loop used to display data
                         if table_collect == 0:  # again check frequency counter
                             data_readings[0].set_change(random.randint(1, 16))

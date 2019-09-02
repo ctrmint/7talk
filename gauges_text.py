@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
-# --------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # Pygame gauge library developed for use with ECU Dashboards.
-# --------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 # Requires import of dash_support for colour definitions.
 # Notes.
 # Gauges currently use the draw arc function which is bugged, and has an aliasing issue on the screen.
 # At present this is expected behaviour.  Yes it sucks!
-# ---------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 import math
 from dash_support import *
