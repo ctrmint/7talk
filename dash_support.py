@@ -3,13 +3,14 @@ mybus = 'vcan0'
 ret_count_val = 3
 #Event timers
 PollCAN_schedule = 10 # milliseconds
+table_collect_start = 30
 #CLOCK
 clock_val = 60
 
 #CLASS STUFF
 buffer_limit = 20
 debug_view = False
-dev_only = True
+live = False
 
 # GENERAL DISPLAY SETTINGS
 display_width = 800
