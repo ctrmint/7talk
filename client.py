@@ -54,7 +54,7 @@ while 1:
     values = gen_data(b, d)
     packed_data = fmt.pack(*values)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ('localhost', udp_port)
+    server_address = (server_addr, server_udp_port)
     sock.connect(server_address)
     try:
         # Send data

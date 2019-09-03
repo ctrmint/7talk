@@ -193,7 +193,7 @@ def processing_loop(sock):
 
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                                      # create server socket
-    svr_addr = (host, udp_port)                                                                    # bind socket to port
+    svr_addr = (server_addr, server_udp_port)                                                      # bind socket to port
     try:
         sock.bind(svr_addr)
         print(str(sock))

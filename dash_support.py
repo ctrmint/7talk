@@ -10,8 +10,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 #UDP Listener
-host = 'localhost'
-udp_port = 11111
+server_addr = 'localhost'
+client_addr = _addr
+server_udp_port = 11111
 
 # Packing structure
 #unpacker = struct.Struct('I I 20s I')
