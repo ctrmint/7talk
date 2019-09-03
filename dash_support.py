@@ -12,7 +12,7 @@
 #UDP Listener
 server_addr = 'localhost'
 client_addr = server_addr
-server_udp_port = 11111
+server_udp_port = 61616
 
 # Packing structure
 #unpacker = struct.Struct('I I 20s I')
@@ -27,8 +27,7 @@ ret_count_val = 3
 
 #EVENT TIMERS AND PYGAME CLOCK
 PollCAN_schedule = 1 # milliseconds
-table_collect_start = 30
-clock_val = 60
+CLOCK_VAL = 60
 
 #CLASS STUFF
 buffer_limit = 20
@@ -51,14 +50,24 @@ title_end_Y = title_start_Y
 # FONT NAMES AND SIZES
 LCD_font = "open24displayst"
 default_fontsize = 30
-rpm_fontsize = 70
-label_fontsize = 12
-data_fontsize = 14
+RPM_FONTSIZE = 70
+LABEL_FONTSIZE = 12
+DATA_FONTSIZE = 14
 
 # Display Labels & Locations.--------------------
-data_value_labels = ["Throttle Angle", "Air Temp", "Coolant Temp", "Coolant fuel factor", "Air Temp fuel factor",
-                     "Throttle Angle Inc", "TPS Fuel+Trim", "TPS Speed Ign+Trim", "TPS Site",
-                     "Battery Volt", "Battery Volt comp"]
+data_value_labels = [
+                    "Throttle Angle",
+                     "Air Temp",
+                     "Coolant Temp",
+                     "Coolant fuel factor",
+                     "Air Temp fuel factor",
+                     "Throttle Angle Inc",
+                     "TPS Fuel+Trim",
+                     "TPS Speed Ign+Trim",
+                     "TPS Site",
+                     "Battery Volt",
+                     "Battery Volt comp"
+                     ]
 
 #RPM Display stuff
 max_rpm = 7700

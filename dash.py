@@ -41,6 +41,8 @@ pygame.mixer.quit()   # bug fix, killing mixer stop CPU hog!!!
 # Pygame event for CANBus
 POLLCAN = pygame.USEREVENT + 1
 pygame.time.set_timer(POLLCAN, PollCAN_schedule)
+# setup clock
+clock = pygame.time.Clock()
 
 # sort display surface
 gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -55,18 +57,17 @@ for font in range(len(available_fonts)):
         lcd_fontpath = pygame.font.match_font(available_fonts[font])
     if available_fonts[font] == 'hack':
         hack_font = pygame.font.match_font(available_fonts[font])
-        rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
-        labelFont = pygame.font.Font(hack_font, label_fontsize)
-        dataFont = pygame.font.Font(hack_font, data_fontsize)
+        rpmFont = pygame.font.Font(hack_font, RPM_FONTSIZE)
+        labelFont = pygame.font.Font(hack_font, LABEL_FONTSIZE)
+        dataFont = pygame.font.Font(hack_font, DATA_FONTSIZE)
     else:
         if available_fonts[font] == 'freemono':
             hack_font = pygame.font.match_font(available_fonts[font])
-            rpmFont = pygame.font.Font(hack_font, rpm_fontsize)
-            labelFont = pygame.font.Font(hack_font, label_fontsize)
-            dataFont = pygame.font.Font(hack_font, data_fontsize)
+            rpmFont = pygame.font.Font(hack_font, RPM_FONTSIZE)
+            labelFont = pygame.font.Font(hack_font, LABEL_FONTSIZE)
+            dataFont = pygame.font.Font(hack_font, DATA_FONTSIZE)
 
-# setup clock
-clock = pygame.time.Clock()
+
 # ------------------------------------------------------------------
 
 
@@ -88,8 +89,6 @@ def processing_loop(sock):
     random_loop = False                                         # runs random data, set through keyboard
     demo_rpm_val = 0                                            # initial value for demo data.
 
-    table_collect = table_collect_start                         # set counter(frequency) to fetch table data
-                                                                # freq = table_collect/pygame clock
 
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
@@ -97,7 +96,7 @@ def processing_loop(sock):
     data_txt_as_list = list_data_text(windowSurface, dataFont, 160, 40, 30)
 
     # declare rpm txt instance and display 0000 value
-    rpm_txt = SplitDataText("rpm", windowSurface, hack_font, rpm_fontsize, 0.9, ([GREEN, TEXT_BG]),
+    rpm_txt = SplitDataText("rpm", windowSurface, hack_font, RPM_FONTSIZE, 0.9, ([GREEN, TEXT_BG]),
                             ([V_DARK_GREEN, TEXT_BG]), [420, 160])
 
     # declare rpm gauge instance and display bar for zero value
@@ -164,7 +163,7 @@ def processing_loop(sock):
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
 
-        clock.tick(clock_val)
+        clock.tick(CLOCK_VAL)
         pygame.display.update()
         while pending_data:
             connection, client_address = sock.accept()
