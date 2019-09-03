@@ -82,6 +82,11 @@ def simple_send(socket, message):
     socket.send(message)
     return
 
+def simple_send_receive(socket, message):
+    socket.send(message)
+    received = socket.recv()
+    print(str(recieved))
+    return
 
 def processing_loop(socket):
     # Control parameters
@@ -117,7 +122,7 @@ def processing_loop(socket):
 
     rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
 
-    simple_send(socket, Serial_number)
+    simple_send_receive(socket, Serial_number)
 
 
     while keep_running:
