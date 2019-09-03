@@ -10,9 +10,6 @@ from itertools import count
 from dash_support import *
 
 
-
-
-
 class Can_val(object):
     """  A class to represent the data processed by the dash """
     _ids = count(0)
