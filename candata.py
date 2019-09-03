@@ -110,39 +110,3 @@ class Rpmval(Can_val):
     """ Rpm value class"""
     def __init__(self, name, rx_val):
         super(Rpmval, self).__init__(name, rx_val)
-
-
-def process_can_message(msgtoprocess):
-    rpm_val = "0"
-    if str(msgtoprocess).startswith("03.81.") and str(msgtoprocess).endswith(".f8.7c"):
-        rpm_val = str(msgtoprocess[9:11]).join(str(msgtoprocess[12:14]))
-        print(str(msgtoprocess))
-    return str(int(rpm_val, 16))
-
-
-def receive_can_frame(bus):
-    mymessage = Rec_Msg(0.0, 0, False, False, False, 0, 0, [0x00], False, False)
-    backupmessage = mymessage
-    return_counter = ret_count_val
-    control = True
-    while control:
-        try:
-            message = bus.recv(timeout=1)
-            if message:
-                mymessage = Rec_Msg(message.timestamp, message.arbitration_id, message.is_extended_id,
-                                    message.is_remote_frame, message.is_error_frame, message.channel, message.dlc,
-                                    message.data, message.is_fd, message.bitrate_switch)
-        except can.CanError:
-            pass
-
-        if mymessage.dlc == 8:
-            mymessage.msg_status = True
-            control = False
-        else:
-            if return_counter > 0:
-                return_counter -= 1
-            else:
-                control = False
-                mymessage = backupmessage
-
-    return mymessage.rough_str, mymessage.hex_arbitration_id, mymessage.data_hexstring
