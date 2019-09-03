@@ -48,14 +48,16 @@ def main():
     b = 0
     d = 0
     display_data_structure()
+
     while 1:
         b += 1
         if b > 10:
             b = 0
         values = gen_data(b, d)
         packed_data = fmt.pack(*values)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = (server_addr, server_udp_port)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)            # creating socket with these two lines
+        server_address = (server_addr, server_udp_port)                     # need to be in loop otherwise errors!
+
         try:                                                                # try ...
             sock.connect(server_address)                                    #    and connect to the dash server socket
             try:                                                            # connected...
