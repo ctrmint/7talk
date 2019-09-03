@@ -9,6 +9,13 @@
 #   Needs to be setup via configuration file rather than importing in this manner.  This was a quick solution during dev
 # ----------------------------------------------------------------------------------------------------------------------
 
+#UDP Listener
+host = 'localhost'
+udp_port = 11111
+
+# Packing structure
+#unpacker = struct.Struct('I I 20s I')
+
 #CAN / ISOTP COMMS PARAMETERS
 mybus = 'vcan0'
 bitrate = 500000

@@ -17,8 +17,7 @@
 #       data_txt_as_list = list of instances of DataText, used to print data on the screen.
 # ----------------------------------------------------------------------------------------------------------------------
 
-import os, sys, time, datetime
-import random
+import os, sys, time, datetime, socket, random, binascii, struct
 import can
 from can.interfaces.socketcan import SocketcanBus
 import isotp
@@ -76,8 +75,11 @@ def demo_rpm(demo_rpm_val):
     return demo_rpm_val
 
 
-def processing_loop():
+def processing_loop(sock):
+    unpacker = struct.Struct('I I 20s I')
+
     # Control parameters
+    pending_data = True
     keep_running = True                                         # ensures continued operation, set false in flow to stop
     demo_loop = False                                           # runs demo data, set through keyboard
     random_loop = False                                         # runs random data, set through keyboard
@@ -110,8 +112,6 @@ def processing_loop():
 
     rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
 
-
-
     while keep_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -124,25 +124,12 @@ def processing_loop():
                     rpm_reading.set_change(demo_rpm_val)
                 if random_loop:
                     rpm_reading.set_change(random.randint(1, max_rpm))
-
                 else:
                     if live:                           # collect RPM Data via can at base frequency set by pygame clock
                         rough_str, hex_id, data_hex = receive_can_frame(bus)
                         rpm_value = process_can_message(rough_str)
                         rpm_reading.set_change(rpm_value)
-
-                        if table_collect == 0:                                  # collect table data, at lower frequency
-                            # poll for table data from CAN here.                                    # collect goes here
-                            table_collect = table_collect_start                   # reset timer used to lower frequency
-                        table_collect -= 1
-
-                    else:                                                            # testing loop used to display data
-                        if table_collect == 0:  # again check frequency counter
-                            data_readings[0].set_change(random.randint(1, 16))
-                            data_readings[1].set_change(random.randint(1, 16))
-                            data_readings[2].set_change(random.randint(1, 16))
-                            table_collect = table_collect_start                                     #  reset the counter
-                        table_collect -= 1                                                            #  dec the counter
+                                                        #  dec the counter
 
             elif event.type == KEYDOWN:
                 demo_loop = False
@@ -172,21 +159,53 @@ def processing_loop():
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
 
-            #    Update data table with readings held within data_readings list, made up of Can_val instances.
-            for i in range(len(data_readings)):                                      # loop through instances
-                for j in range(len(data_txt_as_list)):                               # loop through text names
-                    if data_readings[i].name == data_txt_as_list[j].name:            # look for same 'name' and if match
-                        data_txt_as_list[j].update(data_readings[i].rx_val)          # update displayed text with rx_val
-            # -------------------------------------------------------------
+        clock.tick(clock_val)
+
+        while pending_data:
+            connection, client_address = sock.accept()
+            try:
+                data = connection.recv(unpacker.size)
+                unpacked_data = unpacker.unpack(data)
+                print(str(unpacked_data) + " " + str(type(unpacked_data)))
+                pending_data = False
+            finally:
+                connection.close()
+        pending_data = True
+        sock.listen()
+
+        if unpacked_data[0] == 99:                                                         # 99 is currently id for RPM
+            rpm_reading.set_change(unpacked_data[3])
+        else:
+            data_readings[(unpacked_data[0])].set_change(unpacked_data[3])
+            data_txt_as_list[(unpacked_data[0])].update(data_readings[(unpacked_data[0])].rx_val)
+
+        #    Update data table with readings held within data_readings list, made up of Can_val instances.
+        #for i in range(len(data_readings)):  # loop through instances
+            #for j in range(len(data_txt_as_list)):  # loop through text names
+               # if data_readings[i].name == data_txt_as_list[j].name:  # look for same 'name' and if match
+                   # data_txt_as_list[j].update(data_readings[i].rx_val)  # update displayed text with rx_val
+        # -------------------------------------------------------------
 
         pygame.display.update()
-        clock.tick(clock_val)
+
     return
 
 
 def main():
-    processing_loop()
+    # create server socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # bind socket to port
+    svr_addr = (host, udp_port)
+    try:
+        sock.bind(svr_addr)
+        print(str(sock))
+        sock.listen(1)
 
+    except:
+        print("Something went wrong")
+
+    if sock:
+        processing_loop(sock)
 
 if __name__ == '__main__':
     main()
