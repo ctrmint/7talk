@@ -10,40 +10,7 @@ from itertools import count
 from dash_support import *
 
 
-class Rec_Msg(can.Message):
-    """A simple class for the received message"""
 
-    _ids = count(0)                             # packet counter
-    arb_counter = {}
-
-    def __init__(self, timestamp, arbitration_id, is_extended_id, is_remote_frame, is_error_frame, channel, dlc,
-                 data, is_fd, bitrate_switch):
-        super().__init__(timestamp, arbitration_id, is_extended_id, is_remote_frame, is_error_frame, channel, dlc,
-                         data, is_fd, bitrate_switch)
-        self.rx_val = 0
-        self.msg_status = False
-        self.data_list = []
-        self.rough_str = ""
-        self.data_hexstring = []
-        self.id_hexstring = "0x00000"
-        self.id = next(self._ids)               # increment packet counter
-        self.same = True
-        self.hex_arbitration_id = hex(self.arbitration_id)
-
-        if self.hex_arbitration_id in self.arb_counter:
-            self.arb_counter[self.hex_arbitration_id] += 1
-        else:
-            if len(self.arb_counter) < 20:
-                self.arb_counter[self.hex_arbitration_id] = 1
-            else:
-                self.arb_counter.popitem()
-
-        if self.dlc > 0:
-            self.data_hexstring = binascii.hexlify(self.data)
-            for b in self.data:
-                self.data_list.append(format(b, "02x"))
-                self.rough_str += format(b, "02x")+"."
-            self.rough_str = self.rough_str[0:-1]
 
 
 class Can_val(object):

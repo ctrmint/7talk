@@ -21,20 +21,6 @@ def display_data_structure():
               + ", data value)")
     return
 
-def gen_data(b, d):
-    # message format
-    # i = list element
-    # i = message sequence counter 0-9
-    # b = message name ljust(20)
-    # I = value
-    # test value
-    a = 6
-    mystring = 'Coolant Temp'.ljust(20, " ")
-    c = bytearray(mystring.encode('utf-8'))
-    d = random.randint(0, 130)
-    values = (a, b, c, d)
-    return values
-
 
 def packing(fmt, unpacked_data):
     packed_data = fmt.pack(*unpacked_data)
@@ -60,21 +46,30 @@ def send_data(packed_data):
     return success
 
 def main():
-    display_data_structure()                                                # Print som details regarding structure
-    fmt = struct.Struct('I I 20s I')                                        # format of packing structure
-    b = 0
-    d = 0
+    test_routine = True
+    display_data_structure()                                        # Print som details regarding structure
+    fmt = struct.Struct('I I 20s I')                                # format of packing structure
+    packet_counter = 0
     while 1:
-        b += 1
-        if b > 10:
-            b = 0
 
-        values = gen_data(b, d)                                     # generate some test values, needs a better function
+        if not test_routine:
+            # Query CAN etc!
+            pass
+        else:
+            for i in range(len(data_value_labels)):
+                name_string = str(data_value_labels[i]).ljust(20, " ")
+                a = i
+                b = packet_counter
+                c = bytearray(name_string.encode('utf-8'))
+                d = random.randint(0, 130)
+                values = (a, b, c, d)
+                packed_data = packing(fmt, values)                       # pack the data to be sent via socket
+                send_data(packed_data)                                    # send packed data via function.
 
-        packed_data = packing(fmt, values)                          # pack the data to be sent via socket
-        send_data(packed_data)                                      # send packed data via function.
-
-
+            if packet_counter < 10:
+                packet_counter += 1
+            else:
+                packet_counter = 0
 
 
 if __name__ == '__main__':

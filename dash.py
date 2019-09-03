@@ -163,7 +163,7 @@ def processing_loop(sock):
             trace_gauge.update(rpm_reading.rx_val)
 
         clock.tick(clock_val)
-
+        pygame.display.update()
         while pending_data:
             connection, client_address = sock.accept()
             try:
@@ -182,12 +182,6 @@ def processing_loop(sock):
             data_readings[(unpacked_data[0])].set_change(unpacked_data[3])
             data_txt_as_list[(unpacked_data[0])].update(data_readings[(unpacked_data[0])].rx_val)
 
-        # RETIRED......Update data table with readings held within data_readings list, made up of Can_val instances.
-        #for i in range(len(data_readings)):  # loop through instances
-            #for j in range(len(data_txt_as_list)):  # loop through text names
-               # if data_readings[i].name == data_txt_as_list[j].name:  # look for same 'name' and if match
-                   # data_txt_as_list[j].update(data_readings[i].rx_val)  # update displayed text with rx_val
-        # -/RETIRED------------------------------------------------------------
         pygame.display.update()
     return
 
