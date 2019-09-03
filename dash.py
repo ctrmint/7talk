@@ -75,20 +75,8 @@ def demo_rpm(demo_rpm_val):
         demo_rpm_val = 0
     return demo_rpm_val
 
-def isotp_error_handler(error):
-   logging.warning('IsoTp error happened : %s - %s' % (error.__class__.__name__, str(error)))
 
-def simple_send(socket, message):
-    socket.send(message)
-    return
-
-def simple_send_receive(socket, message):
-    socket.send(message)
-    received = socket.recv()
-    print(str(recieved))
-    return
-
-def processing_loop(socket):
+def processing_loop():
     # Control parameters
     keep_running = True                                         # ensures continued operation, set false in flow to stop
     demo_loop = False                                           # runs demo data, set through keyboard
@@ -122,7 +110,6 @@ def processing_loop(socket):
 
     rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
 
-    simple_send_receive(socket, Serial_number)
 
 
     while keep_running:
@@ -198,14 +185,8 @@ def processing_loop(socket):
 
 
 def main():
-    #------
-    # Configure can interface socket, uses (PurpleMeanie) revised ISOTP kernel module which doesn't require flow control
-    # Dash will not function with flow control as ECU does not use flow control!
-    # -----  code block to be moved to function.
-    s = isotp.socket()
-    s.set_opts(0x480, frame_txtime=0)                               # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
-    s.bind("vcan0", isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=Rxid, txid=0x0cbe1))
-    processing_loop(s)
+    processing_loop()
+
 
 if __name__ == '__main__':
     main()
