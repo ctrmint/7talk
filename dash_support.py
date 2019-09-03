@@ -11,7 +11,7 @@
 
 #UDP Listener
 server_addr = 'localhost'
-client_addr = _addr
+client_addr = server_addr
 server_udp_port = 11111
 
 # Packing structure
