@@ -78,15 +78,13 @@ def demo_rpm(demo_rpm_val):
 def isotp_error_handler(error):
    logging.warning('IsoTp error happened : %s - %s' % (error.__class__.__name__, str(error)))
 
-def simple_request(socket):
-    socket.send(b'This is an interesting test message to send')
+def simple_send(socket, message):
+    socket.send(message)
     return
 
 
 def processing_loop(socket):
     # Control parameters
-    socket.send(b'\x04\x00\x0d')
-
     keep_running = True                                         # ensures continued operation, set false in flow to stop
     demo_loop = False                                           # runs demo data, set through keyboard
     random_loop = False                                         # runs random data, set through keyboard
@@ -94,7 +92,6 @@ def processing_loop(socket):
 
     table_collect = table_collect_start                         # set counter(frequency) to fetch table data
                                                                 # freq = table_collect/pygame clock
-
 
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
@@ -120,7 +117,7 @@ def processing_loop(socket):
 
     rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
 
-    #simple_request(socket)
+    simple_send(socket, Serial_number)
 
 
     while keep_running:
