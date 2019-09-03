@@ -26,7 +26,7 @@ Txid = 0x0cbe1101
 ret_count_val = 3
 
 #EVENT TIMERS AND PYGAME CLOCK
-PollCAN_schedule = 10 # milliseconds
+PollCAN_schedule = 1 # milliseconds
 table_collect_start = 30
 clock_val = 60
 

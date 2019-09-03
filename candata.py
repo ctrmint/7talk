@@ -57,12 +57,11 @@ class Can_val(object):
         return
 
     def wipe(self):
-        self.rx_val = 0
         self.buffer.clear()
         self.long_buffer.clear()
         self.high_val = 0
         self.avg_val = 0
-        self.change_val()
+        self.set_change(0)
         return
 
     def is_high(self):

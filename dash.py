@@ -121,37 +121,39 @@ def processing_loop(sock):
                 keep_running = False
                 pygame.quit()
                 sys.exit()
-            elif event.type == POLLCAN:
-                if demo_loop:
-                    demo_rpm_val = demo_rpm(demo_rpm_val)
-                    rpm_reading.set_change(demo_rpm_val)
-                if random_loop:
-                    rpm_reading.set_change(random.randint(1, max_rpm))
-                else:
-                    if live:                           # collect RPM Data via can at base frequency set by pygame clock
-                        rough_str, hex_id, data_hex = receive_can_frame(bus)
-                        rpm_value = process_can_message(rough_str)
-                        rpm_reading.set_change(rpm_value)
-                                                        #  dec the counter
-
             elif event.type == KEYDOWN:
-                demo_loop = False
-                random_loop = False
                 if event.key == K_UP:
+                    demo_loop = False
+                    random_loop = False
                     rpm_reading.test_change(250)
                 if event.key == K_DOWN:
+                    random_loop = False
+                    demo_loop = False
                     rpm_reading.test_change(-100)
                 if event.key == K_LEFT:
+                    random_loop = False
+                    demo_loop = False
                     rpm_reading.reset_current_val(0)
                 if event.key == K_RIGHT:
-                    rpm_reading.wipe()
+                    random_loop = False
+                    demo_loop = False
+                    rpm_reading.wipe()    #needs to fixed!!!!!
                 if event.key == K_LSHIFT:
+                    random_loop = False
                     demo_loop = True
                 if event.key == K_RSHIFT:
+                    demo_loop = False
                     random_loop = True
 
             if not rpm_reading.rx_val_inc:
                 rpm_dial_gauge.draw_wiper_arc()
+
+            if demo_loop:
+                rpm_reading.rx_val = demo_rpm(rpm_reading.rx_val)
+
+            if random_loop:
+                rpm_reading.rx_val = random.randint(1, 7700)
+
 
             # bug fix to stop zero values from the keyboard.  -- code improvement needed
             if rpm_reading.rx_val < 0:
