@@ -78,13 +78,15 @@ def demo_rpm(demo_rpm_val):
 def isotp_error_handler(error):
    logging.warning('IsoTp error happened : %s - %s' % (error.__class__.__name__, str(error)))
 
-def simple_request(s):
-    s.send(b'This is an interesting test message to send')
+def simple_request(socket):
+    socket.send(b'This is an interesting test message to send')
     return
 
 
-def processing_loop(stack):
+def processing_loop(socket):
     # Control parameters
+    socket.send(b'\x04\x00\x0d')
+
     keep_running = True                                         # ensures continued operation, set false in flow to stop
     demo_loop = False                                           # runs demo data, set through keyboard
     random_loop = False                                         # runs random data, set through keyboard
@@ -118,7 +120,7 @@ def processing_loop(stack):
 
     rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
 
-    simple_request(stack)
+    #simple_request(socket)
 
 
     while keep_running:
@@ -194,11 +196,14 @@ def processing_loop(stack):
 
 
 def main():
+    #------
+    # Configure can interface socket, uses (PurpleMeanie) revised ISOTP kernel module which doesn't require flow control
+    # Dash will not function with flow control as ECU does not use flow control!
+    # -----  code block to be moved to function.
     s = isotp.socket()
-    s.set_opts(0x480, frame_txtime=0)  # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
-    s.bind("vcan0", isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=0x0cbe0111, txid=0x0cbe1101))
-    s.send(b'\x04\x00\x0d')
-
+    s.set_opts(0x480, frame_txtime=0)                               # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
+    s.bind("vcan0", isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=Rxid, txid=0x0cbe1))
+    processing_loop(s)
 
 if __name__ == '__main__':
     main()
