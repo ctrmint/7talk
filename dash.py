@@ -4,8 +4,11 @@
 # Revision  :   0.1
 # Author    :   Mark Rodman
 # ----------------------------------------------------------------------------------------------------------------------
-# Reads information from the MBE ECU for display on screen via
-# pygame.
+# Dashboard display of MBE ECU data, show support other ECUs in due course.
+# Application has been built to be independent of the data source.
+# Data to be displayed is received via a UDP stream, making dash.py essentially the server.
+# A client needs to be executed to transmit received / decode CAN ISOTP frames from an ECU.
+# Client sends one data value per UDP packet.
 # ----------------------------------------------------------------------------------------------------------------------
 # Status: incomplete
 # ----------------------------------------------------------------------------------------------------------------------
@@ -179,31 +182,24 @@ def processing_loop(sock):
             data_readings[(unpacked_data[0])].set_change(unpacked_data[3])
             data_txt_as_list[(unpacked_data[0])].update(data_readings[(unpacked_data[0])].rx_val)
 
-        #    Update data table with readings held within data_readings list, made up of Can_val instances.
+        # RETIRED......Update data table with readings held within data_readings list, made up of Can_val instances.
         #for i in range(len(data_readings)):  # loop through instances
             #for j in range(len(data_txt_as_list)):  # loop through text names
                # if data_readings[i].name == data_txt_as_list[j].name:  # look for same 'name' and if match
                    # data_txt_as_list[j].update(data_readings[i].rx_val)  # update displayed text with rx_val
-        # -------------------------------------------------------------
-
+        # -/RETIRED------------------------------------------------------------
         pygame.display.update()
-
     return
 
-
 def main():
-    # create server socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # bind socket to port
-    svr_addr = (host, udp_port)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                                      # create server socket
+    svr_addr = (host, udp_port)                                                                    # bind socket to port
     try:
         sock.bind(svr_addr)
         print(str(sock))
         sock.listen(1)
-
     except:
         print("Something went wrong")
-
     if sock:
         processing_loop(sock)
 
