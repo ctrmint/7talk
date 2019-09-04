@@ -13,6 +13,7 @@
 server_addr = 'localhost'
 client_addr = server_addr
 server_udp_port = 61616
+PACKET_COUNTER_LIMIT = 999
 
 # Packing structure
 #unpacker = struct.Struct('I I 20s I')
