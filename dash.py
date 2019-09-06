@@ -81,6 +81,9 @@ def demo_rpm(demo_rpm_val):
 
 def processing_loop(sock):
     unpacker = struct.Struct('I 20s I')
+    TABLE_START_X = 3
+    TABLE_START_Y = 10
+    TABLE_INC_Y = 30
 
     # Control parameters
     pending_data = True
@@ -92,8 +95,8 @@ def processing_loop(sock):
 
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
-    draw_screen_labels(windowSurface, labelFont, 3, 40, 30)
-    data_txt_as_list = list_data_text(windowSurface, dataFont, 160, 40, 30)
+    #draw_screen_labels(windowSurface, labelFont, 3, 20, 30)
+
 
     # declare rpm txt instance and display 0000 value
     rpm_txt = SplitDataText("rpm", windowSurface, hack_font, RPM_FONTSIZE, 0.9, ([GREEN, TEXT_BG]),
@@ -108,9 +111,12 @@ def processing_loop(sock):
     trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100, ([DARK_GREEN, BLACK]), (7800, 0), False, True)
 
 
-    data_readings = []                                                 # Data storage list
-    for item in data_value_labels:                                     # loop creating instances of Can_val
-        data_readings.append(Can_val(item, 0))                         # based on supplied labels from data_value_labels
+    reference_display_table_labels = []                           # Simple reference lookup table, easy check to
+                                                                  # see if the table has been seen before.
+    display_table_labels = []                                     # List of label objects from class.
+    display_table_readings = []                                   # List of text objects relating to the data displayed
+
+
 
     rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
 
@@ -177,11 +183,33 @@ def processing_loop(sock):
         pending_data = True
         sock.listen()
 
-        if unpacked_data[0] == 99:                                                         # 99 is currently id for RPM
-            rpm_reading.set_change(unpacked_data[3])
+        data_label = str(unpacked_data[1].decode("utf-8")).rstrip()
+        data_value = int(unpacked_data[2])
+
+        if data_label == "Engine Speed":                                  # is data engine speed, if so
+            rpm_reading.set_change(unpacked_data[2])                      # update dedicated engine speed
+
         else:
-            data_readings[(unpacked_data[0])].set_change(unpacked_data[3])
-            data_txt_as_list[(unpacked_data[0])].update(data_readings[(unpacked_data[0])].rx_val)
+           # if len(reference_display_table_labels) < 10:                    # Capture the labels from the stream of data
+            if data_label not in reference_display_table_labels:               # if not in list
+
+                # create the labels here for each value here.
+                reference_display_table_labels.append(data_label)              # add to list.
+                x = TABLE_START_X
+                y = TABLE_START_Y + (len(reference_display_table_labels) * TABLE_INC_Y)
+                display_table_labels.append(LabelText(data_label, windowSurface, data_label,
+                                                          DARK_GREEN, TEXT_BG, labelFont, x, y))
+
+                # repeat similar process here, for the data values.
+                display_table_readings.append(DataText(data_label, windowSurface, data_value,
+                                                          GREEN, TEXT_BG, labelFont, (x+160), y))
+
+            # we have a full list of labels and prior data, so we need to update the screen value with the current
+            # data value
+
+            for item in display_table_readings:               # run through display table readings and look for
+                if item.name == data_label:                   # instance name matching current data
+                    item.update(data_value)                   # if match update the screen label.
 
         pygame.display.update()
     return

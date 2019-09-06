@@ -47,37 +47,6 @@ def send_data(packed_data):
     return success
 
 
-def hack_together_data(dict_name):
-    # this is terrible solution, but a quick temp fix before a better solution is sorted.
-    if dict_name == "RT_ENGINESPEED":
-        index = 99
-    elif dict_name == "Throttle Angle":
-        index = 0
-    elif dict_name == "RT_AIRTEMP1(LIM)":
-        index = 1
-    elif dict_name == "RT_COOLANTTEMP1(LIM)":
-        index = 2
-    elif dict_name == "RT_COOLANTFUELFACTOR":
-        index = 3
-    elif dict_name == "RT_AIRTEMPFUELFACTOR":
-        index = 4
-    elif dict_name == "RT_THROTTLEANGLEINCREASING":
-        index = 5
-    elif dict_name == "RT_TPSFUEL+TRIMBANK1":
-        index = 6
-    elif dict_name == "RT_TPSVSSPEEDIGN+TRIM1":
-        index = 7
-    elif dict_name == "RT_THROTTLESITE1":
-        index = 8
-    elif dict_name == "RT_BATTERYVOLTAGE(LIM)":
-        index = 9
-    elif dict_name == "RT_BATTERYVOLTAGECOMP":
-        index = 10
-    else:
-        index = 100
-    return index
-
-
 def test_routine(fmt):                                      # test routine designed to test comms, uses random data etc.
     # needs rewriting to support the new class.
     packet_counter = 0
@@ -152,10 +121,9 @@ def main():
         # get fresh can data or not!
         if ecu.process_all_pages(results):
             logging.debug(pprint.pformat(results))
-            for key in (results.keys()):
-                i = hack_together_data(key)                                         # set index value
+            for key in (results.keys()):                                            # set index value
                 value = int((results.get(key))['value'])                            # pull value from nested dictionary
-                short_desc = str((results.get(key))['short_desc']).lstrip()
+                short_desc = str((results.get(key))['short_desc']).lstrip()         # pull the short_desc from the dict
                 if UDP_tx:
                     mypacket = DataPacket(fmt, short_desc, value)
                     controller.send_packet(mypacket)

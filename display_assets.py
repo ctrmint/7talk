@@ -41,16 +41,6 @@ def draw_screen_borders(windowSurface):
     return
 
 
-def draw_screen_labels(windowSurface, labelFont, x, y, spacing):
-    for label in data_value_labels:
-        LabelText(label, windowSurface, label, DARK_GREEN, TEXT_BG, labelFont, x, y)
-        y += spacing
-    return
 
 
-def list_data_text(windowSurface, datafont, x, y, spacing):
-    list_of_data_txt = []
-    for value in data_value_labels:
-        list_of_data_txt.append(DataText(value, windowSurface, "00000", GREEN, TEXT_BG, datafont, x, y))
-        y += spacing
-    return list_of_data_txt
+

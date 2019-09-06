@@ -378,7 +378,9 @@ class LabelText(object):
         # draw the text onto the surface
         self.windowSurface.blit(text, (self.loc_x, self.loc_y))
 
-
+    def update(self, value):
+        self.textstr = value
+        self.windowSurface.blit(text, (self.loc_x, self.loc_y))
 
     def __str__(self):
         return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
