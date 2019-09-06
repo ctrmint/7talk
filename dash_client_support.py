@@ -31,5 +31,5 @@ vars_to_follow_live = [
             #    	'RT_THROTTLEANGLEINCREASING',
             #    	'RT_BAROFUELCOMP',
             #    	'RT_CRANKCOUNT',
-                    'RT_ENGINESPEED'
+            #        'RT_ENGINESPEED'
         ]

@@ -66,7 +66,7 @@ def test_routine(fmt):                                      # test routine desig
 
 
 def main():
-    display_data_structure()                                                    # Print some details regarding structure
+    #display_data_structure()                                                    # Print some details regarding structure
                                                                                 # Regards UDP structure, to be removed!
     UDP_tx = True
     stdout_dict = True

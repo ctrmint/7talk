@@ -10,6 +10,7 @@
 
 #Welcome string
 VERSION = 0.5
+version = str(VERSION)
 APP_NAME = "7 Talk Dashboard."
 WELCOME = "Welcome to " + APP_NAME + " Build:" + str(VERSION)
 
