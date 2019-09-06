@@ -127,18 +127,14 @@ def main():
                 if UDP_tx:
                     mypacket = DataPacket(fmt, short_desc, value)
                     controller.send_packet(mypacket)
-                else:
-                    # i is > than list length, basically denoting that the value isn't supported by the Dash display
-                    # this value should logged on the client or possibly sent over to the dash for logging only.
-                    # log only requires additional flag to be added to the payload, v2 build possibly.
-                    print((str(value) + "Value not supported on display"))
+
 
             if stdout_dict:
                 pp = pprint.PrettyPrinter(indent=10)
                 pp.pprint(results)
 
 
-            time.sleep(0.25)
+            time.sleep(0.125)
 
         else:
             test_routine(fmt)                                               # Test routine

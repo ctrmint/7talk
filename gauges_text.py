@@ -400,5 +400,3 @@ class DataText(LabelText):
         text_rect.centery = self.loc_y
         # draw the text onto the surface
         self.windowSurface.blit(text, (self.loc_x, self.loc_y))
-
-

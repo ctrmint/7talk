@@ -32,16 +32,14 @@ from candata import *
 
 
 # Initial setup, needs restructuring, shouldn't be global!
-# init pygame
-pygame.init()
-pygame.font.init()
-pygame.mixer.quit()   # bug fix, killing mixer stop CPU hog!!!
+pygame.init()                                                     # Init pygame
+pygame.font.init()                                                # Init pygame fonts
+pygame.mixer.quit()                                               # BUG FIX, Quitting mixer stops it from hogging cpu!!!
 
-# Pygame event for CANBus
-POLLCAN = pygame.USEREVENT + 1
-pygame.time.set_timer(POLLCAN, PollCAN_schedule)
-# setup clock
-clock = pygame.time.Clock()
+
+POLLCAN = pygame.USEREVENT + 1                                    # Pygame event for CANBus
+pygame.time.set_timer(POLLCAN, PollCAN_schedule)                  # No longer used as intended but weird still required!
+clock = pygame.time.Clock()                                       # Setup PG clock, critical component to runtime.
 
 # sort display surface
 gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -49,7 +47,7 @@ windowSurface = pygame.display.set_mode((display_width, display_height), 0, 32)
 pygame.display.set_caption(display_title)
 windowSurface.fill(STARTCOLOUR)
 
-# setup fonts
+# setup fonts -------- Needs sorting along with the rest of the pygame start up code
 available_fonts = pygame.font.get_fonts()
 for font in range(len(available_fonts)):
     if available_fonts[font] == LCD_font:
@@ -65,10 +63,7 @@ for font in range(len(available_fonts)):
             rpmFont = pygame.font.Font(hack_font, RPM_FONTSIZE)
             labelFont = pygame.font.Font(hack_font, LABEL_FONTSIZE)
             dataFont = pygame.font.Font(hack_font, DATA_FONTSIZE)
-
-
-# ------------------------------------------------------------------
-
+# ----------------------------------------------------------------------------------
 
 def demo_rpm(demo_rpm_val):
     if demo_rpm_val < max_rpm:
@@ -76,7 +71,6 @@ def demo_rpm(demo_rpm_val):
     else:
         demo_rpm_val = 0
     return demo_rpm_val
-
 
 def draw_screen_borders(windowSurface):
     middle_line = 355
@@ -121,11 +115,9 @@ def processing_loop(sock):
     random_loop = False                                         # runs random data, set through keyboard
     demo_rpm_val = 0                                            # initial value for demo data.
 
-
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
     #draw_screen_labels(windowSurface, labelFont, 3, 20, 30)
-
 
     # declare rpm txt instance and display 0000 value
     rpm_txt = SplitDataText("rpm", windowSurface, hack_font, RPM_FONTSIZE, 0.9, ([GREEN, TEXT_BG]),
@@ -145,9 +137,7 @@ def processing_loop(sock):
     display_table_labels = []                                     # List of label objects from class.
     display_table_readings = []                                   # List of text objects relating to the data displayed
 
-
-
-    rpm_reading = Rpmval("rpm", 0)                                     # Instantiate  RPM reading (Can_val) object
+    rpm_reading = Rpmval("rpm", 0)                                # Instantiate  RPM reading (Can_val) object
 
     while keep_running:
         for event in pygame.event.get():

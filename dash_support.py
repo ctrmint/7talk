@@ -4,7 +4,6 @@
 # Author    :   Mark Rodman
 # ----------------------------------------------------------------------------------------------------------------------
 # Supporting parameters for 7 Dash display
-#
 # Notes,
 #   Needs to be setup via configuration file rather than importing in this manner.  This was a quick solution during dev
 # ----------------------------------------------------------------------------------------------------------------------
@@ -62,20 +61,7 @@ RPM_FONTSIZE = 70
 LABEL_FONTSIZE = 12
 DATA_FONTSIZE = 14
 
-# Display Labels & Locations.--------------------
-data_value_labels = [
-                    "Throttle Angle",
-                     "Air Temp",
-                     "Coolant Temp",
-                     "Coolant fuel factor",
-                     "Air Temp fuel factor",
-                     "Throttle Angle Inc",
-                     "TPS Fuel+Trim",
-                     "TPS Speed Ign+Trim",
-                     "TPS Site",
-                     "Battery Volt",
-                     "Battery Volt comp"
-                     ]
+
 
 #RPM Display stuff
 max_rpm = 7700

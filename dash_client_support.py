@@ -1,5 +1,5 @@
 vars_to_follow_test_mode = [
-    'RT_ENGINESPEED',
+    #'RT_ENGINESPEED',
      'RT_AIRTEMP1(LIM)',
      'RT_COOLANTTEMP1(LIM)',
      'RT_BATTERYVOLTAGE(LIM)',
