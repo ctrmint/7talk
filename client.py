@@ -62,7 +62,7 @@ def test_routine(fmt):                                      # test routine desig
             send_data(packed_data)                                   # send packed data via function.
         if packet_counter < 10:                                      # Increment the packet counter if < 10
             packet_counter += 1                                      # as above.
-    return
+    return                                                           #  ------
 
 
 def main():
