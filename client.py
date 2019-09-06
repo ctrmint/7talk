@@ -14,6 +14,7 @@ import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, ma
 import mbe                                                     # coded by John Martin / PurpleMeanie, forked slightly
 from dash_support import *
 from dash_client_udp import *
+from dash_client_support import *
 
 
 def display_data_structure():
@@ -46,6 +47,36 @@ def send_data(packed_data):
     return success
 
 
+def hack_together_data(dict_name):
+    if dict_name == "RT_ENGINESPEED":
+        index = 99
+    elif dict_name == "Throttle Angle":
+        index = 0
+    elif dict_name == "RT_AIRTEMP1(LIM)":
+        index = 1
+    elif dict_name == "RT_COOLANTTEMP1(LIM)":
+        index = 2
+    elif dict_name == "RT_COOLANTFUELFACTOR":
+        index = 3
+    elif dict_name == "RT_AIRTEMPFUELFACTOR":
+        index = 4
+    elif dict_name == "RT_THROTTLEANGLEINCREASING":
+        index = 5
+    elif dict_name == "RT_TPSFUEL+TRIMBANK1":
+        index = 6
+    elif dict_name == "RT_TPSVSSPEEDIGN+TRIM1":
+        index = 7
+    elif dict_name == "RT_THROTTLESITE1":
+        index = 8
+    elif dict_name == "RT_BATTERYVOLTAGE(LIM)":
+        index = 9
+    elif dict_name == "RT_BATTERYVOLTAGECOMP":
+        index = 10
+    else:
+        index = 100
+    return index
+
+
 def test_routine(fmt):                                      # test routine designed to test comms, uses random data etc.
     # needs rewriting to support the new class.
     packet_counter = 0
@@ -65,47 +96,19 @@ def test_routine(fmt):                                      # test routine desig
 
 
 def main():
+    display_data_structure()                                                    # Print some details regarding structure
+                                                                                # Regards UDP structure, to be removed!
+    UDP_tx = True
+    stdout_dict = True
+    fmt = struct.Struct('I I 20s I')                                            # format of packing structure for UDP
+    controller = SendDataController()                                           # UDP transmission controller
+
+    results = dict()                                                            # ISOTP results dictionary
 
     if mbe.test_mode:
-        variables_to_follow = [
-            #'RT_ENGINESPEED',
-            'RT_AIRTEMP1(LIM)',
-            'RT_COOLANTTEMP1(LIM)',
-            #'RT_BATTERYVOLTAGE(LIM)',
-            'RT_SOFTCUTTIME',
-            #'RT_HARDCUTTIME'
-        ]
+        variables_to_follow = vars_to_follow_test_mode
     else:
-        variables_to_follow = [
-            #    	'RT_THROTTLESITE1',
-            #    	'RT_BATTERYVOLTAGECOMP',
-            #    	'RT_IGNITIONADVANCEBANK1',
-            #    	'RT_TPSVSSPEEDIGN+TRIM1',
-            #    	'RT_INJECTIONTIMEA',
-            #    	'RT_COOLANTTEMP1(LIM)',
-        #'RT_AIRTEMP1(LIM)',
-            #    	'RT_MAPPINGPOT1LIM',
-            #    	'RT_MAPPINGPOT2LIM',
-            #    	'RT_COOLANTFUELFACTOR',
-        #'RT_BATTERYVOLTAGE(LIM)',
-            #    	'RT_AIRTEMPFUELFACTOR',
-            #    	'RT_DUTYCYCLEA',
-            #    	'RT_TPSFUEL+TRIMBANK1',
-        #'RT_SOFTCUTTIME',
-        #'RT_HARDCUTTIME',
-            #    	'RT_THROTTLEANGLE1(RAW)',
-            #    	'RT_ENGINERUNTIME',
-            ##   	 'RT_ECUSTATUS',
-            #    	'RT_BAROSCALEDLIM',
-            #    	'RT_THROTTLEANGLEINCREASING',
-            #    	'RT_BAROFUELCOMP',
-            #    	'RT_CRANKCOUNT',
-        #'RT_ENGINESPEED'
-        ]
-    display_data_structure()                                                    # Print som details regarding structure
-    just_testing = False
-    fmt = struct.Struct('I I 20s I')                                            # format of packing structure
-    controller = SendDataController()                                           # transmission controller
+        variables_to_follow = vars_to_follow_live
 
     parser = argparse.ArgumentParser(prog='UniHatRevs', description='Shows rev.')
     parser.add_argument('--interface', '-i', help='The can interface to open', required=True)
@@ -142,19 +145,31 @@ def main():
         logging.info("Added all the variables we expected")
 
     ecu.bind()
-    results = dict()
+
 
     while 1:
-        if not just_testing:
-            i = 1
-            mypacket = DataPacket(fmt, i, data_value_labels[i], 60 )
-            controller.send_packet(mypacket)
+        # get fresh can data or not!
 
-            #if ecu.process_all_pages(results) != False:
-             #   logging.debug(pprint.pformat(results))
-                #unicorn_revs(results['RT_ENGINE_SPEED'])
+        if ecu.process_all_pages(results):
+            logging.debug(pprint.pformat(results))
+            # unicorn_revs(results['RT_ENGINE_SPEED'])
+            for key in (results.keys()):
+                i = hack_together_data(key)                                       # set index value
+                value = int((results.get(key))['value'])                          # pull value from nested dictionary
 
-            #time.sleep(0.25)
+                if UDP_tx:
+                    if i < (len(data_value_labels)-1):
+                        print(str(i))                                                   # transmit packet via UDP
+                        mypacket = DataPacket(fmt, i, data_value_labels[i], value)
+                        controller.send_packet(mypacket)
+
+            if stdout_dict:
+                pp = pprint.PrettyPrinter(indent=10)
+                pp.pprint(results)
+
+
+            time.sleep(0.25)
+
         else:
             test_routine(fmt)                                               # Test routine
 

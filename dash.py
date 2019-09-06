@@ -194,7 +194,7 @@ def main():
         print(str(sock))
         sock.listen(1)
     except:
-        print("Something went wrong")
+        print("Oops - Something went wrong")
     if sock:
         processing_loop(sock)
 
