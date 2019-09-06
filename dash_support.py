@@ -26,6 +26,8 @@ Rxid = 0x0cbe0111
 Txid = 0x0cbe1101
 ret_count_val = 3
 
+version = "0.1"
+
 #EVENT TIMERS AND PYGAME CLOCK
 PollCAN_schedule = 1 # milliseconds
 CLOCK_VAL = 60

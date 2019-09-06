@@ -146,15 +146,15 @@ def main():
 
     while 1:
         if not just_testing:
-            #i = 1
-            #mypacket = DataPacket(fmt, i, data_value_labels[i], 60 )
-            #controller.send_packet(mypacket)
+            i = 1
+            mypacket = DataPacket(fmt, i, data_value_labels[i], 60 )
+            controller.send_packet(mypacket)
 
-            if ecu.process_all_pages(results) != False:
-                logging.debug(pprint.pformat(results))
+            #if ecu.process_all_pages(results) != False:
+             #   logging.debug(pprint.pformat(results))
                 #unicorn_revs(results['RT_ENGINE_SPEED'])
 
-            time.sleep(0.25)
+            #time.sleep(0.25)
         else:
             test_routine(fmt)                                               # Test routine
 
