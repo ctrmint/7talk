@@ -80,7 +80,7 @@ def demo_rpm(demo_rpm_val):
 
 
 def processing_loop(sock):
-    unpacker = struct.Struct('I I 20s I')
+    unpacker = struct.Struct('I 20s I')
 
     # Control parameters
     pending_data = True

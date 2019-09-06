@@ -48,6 +48,7 @@ def send_data(packed_data):
 
 
 def hack_together_data(dict_name):
+    # this is terrible solution, but a quick temp fix before a better solution is sorted.
     if dict_name == "RT_ENGINESPEED":
         index = 99
     elif dict_name == "Throttle Angle":
@@ -100,7 +101,7 @@ def main():
                                                                                 # Regards UDP structure, to be removed!
     UDP_tx = True
     stdout_dict = True
-    fmt = struct.Struct('I I 20s I')                                            # format of packing structure for UDP
+    fmt = struct.Struct('I 20s I')                                            # format of packing structure for UDP
     controller = SendDataController()                                           # UDP transmission controller
 
     results = dict()                                                            # ISOTP results dictionary
@@ -149,19 +150,20 @@ def main():
 
     while 1:
         # get fresh can data or not!
-
         if ecu.process_all_pages(results):
             logging.debug(pprint.pformat(results))
-            # unicorn_revs(results['RT_ENGINE_SPEED'])
             for key in (results.keys()):
-                i = hack_together_data(key)                                       # set index value
-                value = int((results.get(key))['value'])                          # pull value from nested dictionary
-
+                i = hack_together_data(key)                                         # set index value
+                value = int((results.get(key))['value'])                            # pull value from nested dictionary
+                short_desc = str((results.get(key))['short_desc']).lstrip()
                 if UDP_tx:
-                    if i < (len(data_value_labels)-1):
-                        print(str(i))                                                   # transmit packet via UDP
-                        mypacket = DataPacket(fmt, i, data_value_labels[i], value)
-                        controller.send_packet(mypacket)
+                    mypacket = DataPacket(fmt, short_desc, value)
+                    controller.send_packet(mypacket)
+                else:
+                    # i is > than list length, basically denoting that the value isn't supported by the Dash display
+                    # this value should logged on the client or possibly sent over to the dash for logging only.
+                    # log only requires additional flag to be added to the payload, v2 build possibly.
+                    print((str(value) + "Value not supported on display"))
 
             if stdout_dict:
                 pp = pprint.PrettyPrinter(indent=10)

@@ -1,5 +1,6 @@
 from dash_support import *
 import binascii, socket, struct, sys, random
+
 class DataPacket(object):
     """
         ___ UDP Data packet class___
@@ -16,21 +17,21 @@ class DataPacket(object):
 
         method transmit is used transmit data over a socket to SERVER_ADDR / SERVER_UDP_PORT
 
-
+        removed previous index use and table.
 
     """
 
-    def __init__(self, fmt, msg_type, msg_label, msg_value):
+    def __init__(self, fmt, msg_label, msg_value):
         self.counter = 0
         self.fmt = fmt
-        self.msg_type = msg_type
-        self.msg_label = bytearray(str(msg_label).ljust(20, " ").encode('utf-8'))
+        self.msg_label = str(msg_label).ljust(20, " ")
+        self.msg_label_b = bytearray(self.msg_label.encode('utf-8'))
         self.msg_value = msg_value
-        self.value = (self.msg_type, self.counter, self.msg_label, self.msg_value)
+        self.value = (self.counter, self.msg_label_b, self.msg_value)
         self.packed_msg = self.fmt.pack(*self.value)
 
     def send(self):
-        value = (self.msg_type, self.counter, self.msg_label, self.msg_value)
+        value = (self.counter, self.msg_label_b, self.msg_value)
         packed_msg = self.fmt.pack(*value)
         self.transmit(packed_msg)
 
@@ -59,13 +60,13 @@ class SendDataController(object):                          # Pretty basic at the
         self.counter_dict = counter_dict                       # This will track instances of each msg type
                                                                # handy for tracking message loss etc.
     def send_packet(self, packet):
-        if packet.msg_type not in self.counter_dict:           # has msg_type (index) been seen before and added to dict
-            self.counter_dict.update({packet.msg_type: 0})     # Nope, so add a kv pair to dictionary for msg type index
+        if packet.msg_label not in self.counter_dict:           # has msg_type (index) been seen before and added to dict
+            self.counter_dict.update({packet.msg_label: 0})     # Nope, so add a kv pair to dictionary for msg type index
 
-        current_val = self.counter_dict[packet.msg_type]       # Now inc kv pair to illustrate first msg
+        current_val = self.counter_dict[packet.msg_label]       # Now inc kv pair to illustrate first msg
         new_val = current_val + 1                              # or 2nd, 3rd and so on.
         if new_val > PACKET_COUNTER_LIMIT : new_val = 0
-        self.counter_dict[packet.msg_type] = new_val           # this probably wants to be more efficient!
+        self.counter_dict[packet.msg_label] = new_val           # this probably wants to be more efficient!
 
         packet.counter = new_val                               # now set counter in the packet.
         packet.send()
