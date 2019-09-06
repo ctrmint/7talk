@@ -29,7 +29,6 @@ from colours import *
 from gauges_text import *
 from pygame.locals import *
 from candata import *
-from display_assets import *
 
 
 # Initial setup, needs restructuring, shouldn't be global!
@@ -79,11 +78,41 @@ def demo_rpm(demo_rpm_val):
     return demo_rpm_val
 
 
+def draw_screen_borders(windowSurface):
+    middle_line = 355
+    d1 = 300
+    d2 = 680
+
+    # X values
+    x1 = 0
+    x2 = 147
+
+    # Y values
+    y1 = 13
+    y2 = 35
+    y3 = 360
+    y4 = display_height - y1
+    # Dark lines first. which will be overwritten
+    pygame.draw.line(windowSurface, DARK_GREY, (x2, y2), (x2, middle_line), 1)
+
+    # draw table inner borders
+    start_y = 60
+    count = 10
+    while count > 0:
+        pygame.draw.line(windowSurface, DARK_GREY, (x1, start_y), (d1, start_y), 1)
+        count -= 1
+        start_y = start_y + 30
+
+    pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (x1, y1), (display_width, y1), 1)
+    pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (x1, y2), (display_width, y2), 1)
+    pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (x1, y3), (display_width, y3), 1)
+    pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (d1, y2), (d1, y3), 1)
+    pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (d2, y2), (d2, y3), 1)
+    pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (x1, y4), (display_width, y4), 1)
+    return
+
 def processing_loop(sock):
     unpacker = struct.Struct('I 20s I')
-    TABLE_START_X = 3
-    TABLE_START_Y = 10
-    TABLE_INC_Y = 30
 
     # Control parameters
     pending_data = True

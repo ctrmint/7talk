@@ -50,6 +50,11 @@ title_start_Y = 35
 title_end_X = display_width
 title_end_Y = title_start_Y
 
+# TABLE POSITIONING
+TABLE_START_X = 3
+TABLE_START_Y = 10
+TABLE_INC_Y = 30
+
 # FONT NAMES AND SIZES
 LCD_font = "open24displayst"
 default_fontsize = 30
