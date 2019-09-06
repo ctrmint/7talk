@@ -8,7 +8,7 @@ vars_to_follow_test_mode = [
 ]
 
 vars_to_follow_live = [
-            #    	'RT_THROTTLESITE1',
+                	'RT_THROTTLESITE1',
             #    	'RT_BATTERYVOLTAGECOMP',
             #    	'RT_IGNITIONADVANCEBANK1',
             #    	'RT_TPSVSSPEEDIGN+TRIM1',

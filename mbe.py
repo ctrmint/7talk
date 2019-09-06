@@ -15,7 +15,7 @@
 #  {'request':'0100000000e2cccdcecf',                                                   'response':'81ffffff07'}
 #]
 
-test_mode = True # Turns off calls to isotp layer and uses simple test data
+test_mode = False # Turns off calls to isotp layer and uses simple test data
 
 if test_mode:
 	response_data = {'0xf8' : b'\x81\xe7\x49\x21\x53\x00\x00\x3e\x97', '0xf9' : b'\x81\x78\x1e\xdc\x1e'}
@@ -75,7 +75,6 @@ class mbe:
 		except ValueError:  # includes simplejson.decoder.JSONDecodeError
 			logging.error('Decoding JSON has failed')
 			return False
-
 		return variables
 
 	# Debug routine to make sure we've got some good variables loaded
@@ -124,7 +123,7 @@ class mbe:
 	# Not sure if an ordered list is important but Easimap sends queries to the ECU in an ordered list so we'll do the same
 	def add_variable_to_follow(self, name, frequency=None):
 		# Is the name at least non-None
-		if name == None:
+		if name is None:
 			logging.error(f"Unable to add variable where name is None")
 			return False
 

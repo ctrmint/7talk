@@ -17,13 +17,6 @@ from dash_client_udp import *
 from dash_client_support import *
 
 
-def display_data_structure():
-    print("The following structure is used;")
-    for i in range(len(data_value_labels)):
-        print("(" + str(i) + ", incrementing packet counter[0-10], " + str(data_value_labels[i]).ljust(20, " ")
-              + ", data value)")
-    return
-
 def packing(fmt, unpacked_data):
     packed_data = fmt.pack(*unpacked_data)
     return packed_data
@@ -66,12 +59,10 @@ def test_routine(fmt):                                      # test routine desig
 
 
 def main():
-    #display_data_structure()                                                    # Print some details regarding structure
-                                                                                # Regards UDP structure, to be removed!
     UDP_tx = True
     stdout_dict = True
     fmt = struct.Struct('I 20s I')                                            # format of packing structure for UDP
-    controller = SendDataController()                                           # UDP transmission controller
+    controller = SendDataController()                                         # UDP transmission controller
 
     results = dict()                                                            # ISOTP results dictionary
 
