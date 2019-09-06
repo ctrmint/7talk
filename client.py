@@ -10,65 +10,10 @@
 # Client can be used to test the function of dash.py
 # ----------------------------------------------------------------------------------------------------------------------
 
-import binascii, socket, struct, sys, random
+import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, math, time
+import mbe                                                     # coded by John Martin / PurpleMeanie, forked slightly
 from dash_support import *
-
-
-class DataPacket(object):
-    def __init__(self, fmt, msg_type, msg_label, msg_value):
-        self.counter = 0
-        self.fmt = fmt
-        self.msg_type = msg_type
-        self.msg_label = bytearray(str(msg_label).ljust(20, " ").encode('utf-8'))
-        self.msg_value = msg_value
-        self.value = (self.msg_type, self.counter, self.msg_label, self.msg_value)
-        self.packed_msg = self.fmt.pack(*self.value)
-
-    def send(self):
-        value = (self.msg_type, self.counter, self.msg_label, self.msg_value)
-        packed_msg = self.fmt.pack(*value)
-        self.transmit(packed_msg)
-
-    def transmit(self, payload):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                 # creating socket with these two lines
-        server_address = (server_addr, server_udp_port)                          # need to be in loop otherwise errors!
-
-        try:                                                                     # try ...
-            sock.connect(server_address)                                         # and connect to the dash server socket
-            try:                                                                 # connected...
-                sock.send(payload)                                               # send the packet.
-            finally:
-                sock.close()                                                     # now close the socket!
-
-        except socket.error as msg:                                              # initial try to connect failed!!
-            print("Couldn't connect with the server: %s." % msg)                 # error and try again with while loop!
-
-        return
-
-    def __str__(self):
-        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
-                                                                        self.__dict__[item]) for item in self.__dict__))
-
-
-class SendDataController(object):                          # Pretty basic at the moment, just manages the packet counter
-    def __init__(self, counter_dict = {}):                     # @ instantiation set up a tracking dictionary
-        self.counter_dict = counter_dict                       # This will track instances of each msg type
-                                                               # handy for tracking message loss etc.
-    def send_packet(self, packet):
-        if packet.msg_type not in self.counter_dict:           # has msg_type (index) been seen before and added to dict
-            self.counter_dict.update({packet.msg_type: 0})     # Nope, so add a kv pair to dictionary for msg type index
-
-        current_val = self.counter_dict[packet.msg_type]       # Now inc kv pair to illustrate first msg
-        new_val = current_val + 1                              # or 2nd, 3rd and so on.
-        if new_val > PACKET_COUNTER_LIMIT : new_val = 0
-        self.counter_dict[packet.msg_type] = new_val           # this probably wants to be more efficient!
-
-        packet.counter = new_val                               # now set counter in the packet.
-        packet.send()
-
-    def __str__(self):
-        return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,
-                                                                        self.__dict__[item]) for item in self.__dict__))
+from dash_client_udp import *
 
 
 def display_data_structure():
@@ -102,6 +47,7 @@ def send_data(packed_data):
 
 
 def test_routine(fmt):                                      # test routine designed to test comms, uses random data etc.
+    # needs rewriting to support the new class.
     packet_counter = 0
     while packet_counter < 10:
         for i in range(len(data_value_labels)):
@@ -119,16 +65,96 @@ def test_routine(fmt):                                      # test routine desig
 
 
 def main():
+
+    if mbe.test_mode:
+        variables_to_follow = [
+            #'RT_ENGINESPEED',
+            'RT_AIRTEMP1(LIM)',
+            'RT_COOLANTTEMP1(LIM)',
+            #'RT_BATTERYVOLTAGE(LIM)',
+            'RT_SOFTCUTTIME',
+            #'RT_HARDCUTTIME'
+        ]
+    else:
+        variables_to_follow = [
+            #    	'RT_THROTTLESITE1',
+            #    	'RT_BATTERYVOLTAGECOMP',
+            #    	'RT_IGNITIONADVANCEBANK1',
+            #    	'RT_TPSVSSPEEDIGN+TRIM1',
+            #    	'RT_INJECTIONTIMEA',
+            #    	'RT_COOLANTTEMP1(LIM)',
+        #'RT_AIRTEMP1(LIM)',
+            #    	'RT_MAPPINGPOT1LIM',
+            #    	'RT_MAPPINGPOT2LIM',
+            #    	'RT_COOLANTFUELFACTOR',
+        #'RT_BATTERYVOLTAGE(LIM)',
+            #    	'RT_AIRTEMPFUELFACTOR',
+            #    	'RT_DUTYCYCLEA',
+            #    	'RT_TPSFUEL+TRIMBANK1',
+        #'RT_SOFTCUTTIME',
+        #'RT_HARDCUTTIME',
+            #    	'RT_THROTTLEANGLE1(RAW)',
+            #    	'RT_ENGINERUNTIME',
+            ##   	 'RT_ECUSTATUS',
+            #    	'RT_BAROSCALEDLIM',
+            #    	'RT_THROTTLEANGLEINCREASING',
+            #    	'RT_BAROFUELCOMP',
+            #    	'RT_CRANKCOUNT',
+        #'RT_ENGINESPEED'
+        ]
     display_data_structure()                                                    # Print som details regarding structure
     just_testing = False
     fmt = struct.Struct('I I 20s I')                                            # format of packing structure
     controller = SendDataController()                                           # transmission controller
 
+    parser = argparse.ArgumentParser(prog='UniHatRevs', description='Shows rev.')
+    parser.add_argument('--interface', '-i', help='The can interface to open', required=True)
+    parser.add_argument('--variables', '-v', help='Input MBE variables filename', required=True)
+    parser.add_argument('--query_id', '-q', help='CAN query ID (default 0x0cbe1101)', default=0x0cbe1101)
+    parser.add_argument('--response_id', '-r', help='CAN resdponse ID (default 0x0cbe0111', default=0x0cbe0111)
+    parser.add_argument('--loglevel', '-l', help='Logging level to show',
+                        choices=['INFO', 'DEBUG', 'WARNING', 'ERROR', 'NONE'], default="ERROR")
+    parser.add_argument('--logfile', '-f', help='If set logging will be sent to this file')
+    parser.add_argument('--version', '-V', action='version', version='%(prog)s ' + version)
+
+    args = parser.parse_args()
+
+    logging_level = getattr(logging, args.loglevel, None)
+    logging.basicConfig(level=logging_level, filename=args.logfile, filemode='w')
+
+    ecu = mbe.mbe()
+    ret = ecu.set_options(args.variables, args.query_id, args.response_id, args.interface)
+
+    if not ret:
+        logging.error("Unable to set options")
+        exit()
+
+    logging.info("Added all the variables we expected")
+
+
+    if not ret:
+        logging.error("Unable to set options")
+        exit()
+
+    if ecu.add_variable_list_to_follow(variables_to_follow) != len(variables_to_follow):
+        logging.warning("Ooops, didn't add all the vars I wanted to")
+    else:
+        logging.info("Added all the variables we expected")
+
+    ecu.bind()
+    results = dict()
+
     while 1:
         if not just_testing:
-            i = 3
-            mypacket = DataPacket(fmt, i, data_value_labels[i], 60 )
-            controller.send_packet(mypacket)
+            #i = 1
+            #mypacket = DataPacket(fmt, i, data_value_labels[i], 60 )
+            #controller.send_packet(mypacket)
+
+            if ecu.process_all_pages(results) != False:
+                logging.debug(pprint.pformat(results))
+                #unicorn_revs(results['RT_ENGINE_SPEED'])
+
+            time.sleep(0.25)
         else:
             test_routine(fmt)                                               # Test routine
 
