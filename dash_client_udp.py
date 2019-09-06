@@ -36,17 +36,17 @@ class DataPacket(object):
         self.transmit(packed_msg)
 
     def transmit(self, payload):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creating socket with these two lines
-        server_address = (server_addr, server_udp_port)  # need to be in loop otherwise errors!
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                  # creating socket with these two lines
+        server_address = (server_addr, server_udp_port)                           # need to be in loop otherwise errors!
 
-        try:  # try ...
-            sock.connect(server_address)  # and connect to the dash server socket
-            try:  # connected...
-                sock.send(payload)  # send the packet.
+        try:                                                  # try ...
+            sock.connect(server_address)                      # and connect to the dash server socket
+            try:                                              # connected...
+                sock.send(payload)                            # send the packet.
             finally:
-                sock.close()  # now close the socket!
+                sock.close()                                  # now close the socket!
 
-        except socket.error as msg:  # initial try to connect failed!!
+        except socket.error as msg:                           # initial try to connect failed!!
             print("Couldn't connect with the server: %s." % msg)  # error and try again with while loop!
 
         return
@@ -60,8 +60,8 @@ class SendDataController(object):                          # Pretty basic at the
         self.counter_dict = counter_dict                       # This will track instances of each msg type
                                                                # handy for tracking message loss etc.
     def send_packet(self, packet):
-        if packet.msg_label not in self.counter_dict:           # has msg_type (index) been seen before and added to dict
-            self.counter_dict.update({packet.msg_label: 0})     # Nope, so add a kv pair to dictionary for msg type index
+        if packet.msg_label not in self.counter_dict:          # has msg_type (index) been seen before and added to dict
+            self.counter_dict.update({packet.msg_label: 0})    # Nope, so add a kv pair to dictionary for msg type index
 
         current_val = self.counter_dict[packet.msg_label]       # Now inc kv pair to illustrate first msg
         new_val = current_val + 1                              # or 2nd, 3rd and so on.
