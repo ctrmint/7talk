@@ -33,16 +33,16 @@ def send_data(packed_data):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creating socket with these two lines
     server_address = (server_addr, server_udp_port)  # need to be in loop otherwise errors!
 
-    try:  # try ...
-        sock.connect(server_address)  # and connect to the dash server socket
-        try:  # connected...
-            sock.send(packed_data)  # send the packet.
+    try:  #                                  try ...
+        sock.connect(server_address)        # and connect to the dash server socket
+        try:                                # connected...
+            sock.send(packed_data)          # send the packet.
         finally:
-            sock.close()  # now close the socket!
-            success = True
+            sock.close()                    # now close the socket!
+            success = True                  # Unused at the moment, road map to add future functionality
 
-    except socket.error as msg:  # initial try to connect failed!!
-        print("Couldn't connect with the server: %s." % msg)  # error and try again with while loop!
+    except socket.error as msg:             # initial try to connect failed!!
+        print("Couldn't connect with the server: %s." % msg)                      # error and try again with while loop!
         success = False
     return success
 
@@ -50,18 +50,18 @@ def send_data(packed_data):
 def test_routine(fmt):                                      # test routine designed to test comms, uses random data etc.
     # needs rewriting to support the new class.
     packet_counter = 0
-    while packet_counter < 10:
+    while packet_counter < 10:                    # This section is a little verbose, designed to make it more readable.
         for i in range(len(data_value_labels)):
-            name_string = str(data_value_labels[i]).ljust(20, " ")
-            a = i
-            b = packet_counter
-            c = bytearray(name_string.encode('utf-8'))
-            d = random.randint(0, 130)
-            values = (a, b, c, d)
-            packed_data = packing(fmt, values)  # pack the data to be sent via socket
-            send_data(packed_data)  # send packed data via function.
-        if packet_counter < 10:
-            packet_counter += 1
+            name_string = str(data_value_labels[i]).ljust(20, " ")   # ensure the name string is 20 chars (equal length)
+            a = i                                                    # historic use of a, so a becomes i.
+            b = packet_counter                                       # historic use of b, packet counter is added to b
+            c = bytearray(name_string.encode('utf-8'))               # historic use of c, encoded name_string
+            d = random.randint(0, 130)                               # historic use of d, random val,
+            values = (a, b, c, d)                                    # put the lot together, yes long winded!
+            packed_data = packing(fmt, values)                       # pack the data to be sent via socket
+            send_data(packed_data)                                   # send packed data via function.
+        if packet_counter < 10:                                      # Increment the packet counter if < 10
+            packet_counter += 1                                      # as above.
     return
 
 

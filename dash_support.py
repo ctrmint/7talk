@@ -8,6 +8,11 @@
 #   Needs to be setup via configuration file rather than importing in this manner.  This was a quick solution during dev
 # ----------------------------------------------------------------------------------------------------------------------
 
+#Welcome string
+VERSION = 0.5
+APP_NAME = "7 Talk Dashboard."
+WELCOME = "Welcome to " + APP_NAME + " Build:" + str(VERSION)
+
 #UDP Listener
 server_addr = 'localhost'
 client_addr = server_addr
@@ -25,7 +30,6 @@ Rxid = 0x0cbe0111
 Txid = 0x0cbe1101
 ret_count_val = 3
 
-version = "0.1"
 
 #EVENT TIMERS AND PYGAME CLOCK
 PollCAN_schedule = 1 # milliseconds

@@ -117,7 +117,6 @@ def processing_loop(sock):
 
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
-    #draw_screen_labels(windowSurface, labelFont, 3, 20, 30)
 
     # declare rpm txt instance and display 0000 value
     rpm_txt = SplitDataText("rpm", windowSurface, hack_font, RPM_FONTSIZE, 0.9, ([GREEN, TEXT_BG]),
@@ -131,15 +130,19 @@ def processing_loop(sock):
     rpm_dial_gauge = DisplayDialGauge(windowSurface, [330, 55, 325, 325], 2, GAUGE_BORDER_COLOUR)
     trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100, ([DARK_GREEN, BLACK]), (7800, 0), False, True)
 
+    #  ---------------------------------------------------------    __ Display related lists __
+    reference_display_table_labels = []                     # Simple reference lookup table, easy check to
+                                                            # see if the table has been seen before.
+    display_table_labels = []                               # List of label objects from class.
+    display_table_readings = []                             # List of text objects relating to the data displayed
+    # ----------------------------------------------------------------------------------------------------------------
+    data_points = []                                        # List of Can_vals per value type received.  List
+                                                            # attributes are updated to reflect each new packet
 
-    reference_display_table_labels = []                           # Simple reference lookup table, easy check to
-                                                                  # see if the table has been seen before.
-    display_table_labels = []                                     # List of label objects from class.
-    display_table_readings = []                                   # List of text objects relating to the data displayed
+    rpm_reading = Rpmval("rpm", 0)                          # Instantiate  RPM reading (Can_val) object.
+                                        # RPM operates at a higher frequency and as a result has been separated for ease.
 
-    rpm_reading = Rpmval("rpm", 0)                                # Instantiate  RPM reading (Can_val) object
-
-    while keep_running:
+    while keep_running:                                     # Now start core loop used during reception.
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 keep_running = False
@@ -192,13 +195,16 @@ def processing_loop(sock):
         pygame.display.update()
         while pending_data:
             connection, client_address = sock.accept()
+
             try:
                 data = connection.recv(unpacker.size)
                 unpacked_data = unpacker.unpack(data)
-                print(str(unpacked_data) + " " + str(type(unpacked_data)))
+                #print(str(unpacked_data) + " " + str(type(unpacked_data)))
                 pending_data = False
+
             finally:
                 connection.close()
+
         pending_data = True
         sock.listen()
 
@@ -223,14 +229,19 @@ def processing_loop(sock):
                 display_table_readings.append(DataText(data_label, windowSurface, data_value,
                                                           GREEN, TEXT_BG, labelFont, (x+160), y))
 
+                data_points.append(Can_val(data_label, data_value))    #instantiate instance of class for new data label
+
             # we have a full list of labels and prior data, so we need to update the screen value with the current
             # data value
 
-            for item in display_table_readings:               # run through display table readings and look for
-                if item.name == data_label:                   # instance name matching current data
-                    item.update(data_value)                   # if match update the screen label.
+            for item in display_table_readings:             # run through display table readings and look for
+                if item.name == data_label:                 # instance name matching current data
+                    item.update(data_value)                 # if match update the screen label.
 
-        pygame.display.update()
+            for item in data_points:                        # add new data point to appropriate Can_val instance in list
+                if item.name == data_label:
+                    item.set_change(data_value)
+        pygame.display.update()                             # Update the Pygame display.
     return
 
 def main():
@@ -238,6 +249,7 @@ def main():
     svr_addr = (server_addr, server_udp_port)                                                      # bind socket to port
     try:
         sock.bind(svr_addr)
+        print(WELCOME)
         print(str(sock))
         sock.listen(1)
     except:
