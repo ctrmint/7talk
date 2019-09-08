@@ -20,7 +20,7 @@ import itertools
 import pprint
 import isotp
 
-test_mode = False # Turns off calls to isotp layer and uses simple test data
+test_mode = True # Turns off calls to isotp layer and uses simple test data
 
 if test_mode:
 	response_data = {'0xf8' : b'\x81\xe7\x49\x21\x53\x00\x00\x3e\x97', '0xf9' : b'\x81\x78\x1e\xdc\x1e'}

@@ -87,13 +87,13 @@ def draw_screen_borders(windowSurface):
     y3 = 360
     y4 = display_height - y1
     # Dark lines first. which will be overwritten
-    pygame.draw.line(windowSurface, DARK_GREY, (x2, y2), (x2, middle_line), 1)
+    pygame.draw.line(windowSurface, TABLE_CELL_COL, (x2, y2), (x2, middle_line), 1)
 
     # draw table inner borders
     start_y = 60
     count = 10
     while count > 0:
-        pygame.draw.line(windowSurface, DARK_GREY, (x1, start_y), (d1, start_y), 1)
+        pygame.draw.line(windowSurface, TABLE_CELL_COL, (x1, start_y), (d1, start_y), 1)
         count -= 1
         start_y = start_y + 30
 
@@ -119,16 +119,19 @@ def processing_loop(sock):
     draw_screen_borders(windowSurface)
 
     # declare rpm txt instance and display 0000 value
-    rpm_txt = SplitDataText("rpm", windowSurface, hack_font, RPM_FONTSIZE, 0.9, ([GREEN, TEXT_BG]),
-                            ([V_DARK_GREEN, TEXT_BG]), [420, 160])
+    rpm_txt = SplitDataText("rpm", windowSurface, hack_font, RPM_FONTSIZE, 0.9, ([RPM_MSB_TXT, TEXT_BG]),
+                            ([RPM_LSB_TXT, TEXT_BG]), [420, 160])
 
     # declare rpm gauge instance and display bar for zero value
-    rpm_bar = DisplayBarGauge("test", 0, max_rpm, windowSurface,
+    rpm_bar = DisplayBarGauge("rpm", 0, max_rpm, windowSurface,
                               ([rev_image1, rev_image2, rev_image3, rev_image_shift]),
-                              BLACK, ([10, 15]), ([2500, 6600, 7500]))
+                              GEN_BACKGROUND, ([10, 15]), ([2500, 6600, 7500]))
 
-    rpm_dial_gauge = DisplayDialGauge(windowSurface, [330, 55, 325, 325], 2, GAUGE_BORDER_COLOUR)
-    trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100, ([DARK_GREEN, BLACK]), (7800, 0), False, True)
+    rpm_dial_gauge = DisplayDialGauge(windowSurface, [330, 55, 325, 325], 2,
+                                      ([GAUGE_BORDER_COLOUR, DIAL_GAUGE_WIPE_COL]))
+
+    trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100,
+                                    ([TRACE_LINE_COL, SCROLL_WIPE_COL, TRACE_PEAK_COL]), (7800, 0), False, True)
 
     #  ---------------------------------------------------------    __ Display related lists __
     reference_display_table_labels = []                     # Simple reference lookup table, easy check to
@@ -227,7 +230,7 @@ def processing_loop(sock):
 
                 # repeat similar process here, for the data values.
                 display_table_readings.append(DataText(data_label, windowSurface, data_value,
-                                                          GREEN, TEXT_BG, labelFont, (x+160), y))
+                                                          GREEN, TEXT_BG, dataFont, (x+160), y))
 
                 data_points.append(Can_val(data_label, data_value))    #instantiate instance of class for new data label
 

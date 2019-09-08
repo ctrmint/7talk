@@ -63,8 +63,8 @@ TABLE_INC_Y = 30
 LCD_font = "open24displayst"
 default_fontsize = 30
 RPM_FONTSIZE = 70
-LABEL_FONTSIZE = 12
-DATA_FONTSIZE = 14
+LABEL_FONTSIZE = 14
+DATA_FONTSIZE =  16
 
 
 

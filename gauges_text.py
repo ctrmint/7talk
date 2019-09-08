@@ -37,6 +37,7 @@ class DisplayTraceGauge(object):
         self.gaugeheight = gaugeheight
         self.line_colour = colours[0]
         self.wipecolour = colours[1]
+        self.scroll_peak_colour = colours[2]
         self.copy_rect_x = copyrectangle[0]
         self.copy_rect_y = copyrectangle[1]
         self.maxval = maxminvallist[0]
@@ -62,7 +63,7 @@ class DisplayTraceGauge(object):
         if self.graded:
             temp_colour_list = list(self.line_colour)
             if self.current_pair[1] > 90:
-                self.line_colour = WHITE
+                self.line_colour = self.scroll_peak_colour
             else:
                 y_colour = (self.current_pair[1] / self.gaugeheight * 200) + 50
                 temp_colour_list[0] = 0
@@ -72,7 +73,7 @@ class DisplayTraceGauge(object):
                     temp_colour_list[1] = 255
                 self.line_colour = tuple(temp_colour_list)
 
-        pygame.draw.line(self.surface, BLACK, (x, y), (x, (self.baseline-self.gaugeheight)))
+        pygame.draw.line(self.surface, self.wipecolour, (x, y), (x, (self.baseline-self.gaugeheight)))
         pygame.draw.line(self.surface, self.line_colour, (x, y), (x, y))
         area_rect = pygame.Rect(self.copy_rect_x, self.copy_rect_y, display_width, self.gaugeheight)
         area = self.surface.subsurface(area_rect)
@@ -100,11 +101,12 @@ class DisplayDialGauge(object):
     horizontal_line_in_rpm = 180 * data_per_degree
     PI = math.pi
 
-    def __init__(self, wsurface, outer_arc_square, border_thickness, border_colour):
+    def __init__(self, wsurface, outer_arc_square, border_thickness, colour):
         self.data_value = 0
         self.outer_arc_square = outer_arc_square
         self.surface = wsurface
-        self.colour = border_colour
+        self.colour = colour[0]
+        self.wipe_colour = colour[1]
         self.outer_arc_square = outer_arc_square
         self.inner_scale_factor = 40
         self.arc_thickness = border_thickness
@@ -143,7 +145,7 @@ class DisplayDialGauge(object):
                             self.arc_thickness)
 
     def draw_wiper_arc(self):
-        pygame.draw.arc(self.surface, BLACK, self.reading_arc_square, self.arc_start, self.arc_end,
+        pygame.draw.arc(self.surface, self.wipe_colour, self.reading_arc_square, self.arc_start, self.arc_end,
                         self.reading_arc_thickness)
 
     def data_arc(self, data_value):

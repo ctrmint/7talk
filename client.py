@@ -123,7 +123,7 @@ def main():
                 pp = pprint.PrettyPrinter(indent=10)
                 pp.pprint(results)
 
-            time.sleep(0.125)
+            time.sleep(0.1)
 
 if __name__ == '__main__':
     main()
