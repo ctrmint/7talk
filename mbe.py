@@ -1,8 +1,6 @@
 # python-isotp-mbe
 # Class for handling interactions with MBE 9A4 ECU on top of ISOTP and CAN
-#
 # 2019-08-26 John Martin
-#
 
 # Some sample data of a car running
 # sample_data = [
@@ -14,12 +12,6 @@
 #  {'request':'01000000001a525c5d',                                                     'response':'81846e12'},
 #  {'request':'0100000000e2cccdcecf',                                                   'response':'81ffffff07'}
 #]
-
-test_mode = False # Turns off calls to isotp layer and uses simple test data
-
-if test_mode:
-	response_data = {'0xf8' : b'\x81\xe7\x49\x21\x53\x00\x00\x3e\x97', '0xf9' : b'\x81\x78\x1e\xdc\x1e'}
-
 import logging
 import json
 import re
@@ -27,6 +19,11 @@ import binascii
 import itertools
 import pprint
 import isotp
+
+test_mode = False # Turns off calls to isotp layer and uses simple test data
+
+if test_mode:
+	response_data = {'0xf8' : b'\x81\xe7\x49\x21\x53\x00\x00\x3e\x97', '0xf9' : b'\x81\x78\x1e\xdc\x1e'}
 
 version = "0.1"
 
@@ -109,11 +106,10 @@ class mbe:
 				break
 
 	def bind(self):
-		if (not test_mode):
+		if not test_mode:
 			self.socket = isotp.socket()
-			self.socket.set_opts(0x480, frame_txtime=0) # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
+			self.socket.set_opts(0x480, frame_txtime=0)                             # 0x400 NOFLOW_MODE, 0x80 FORCESTMIN
 			self.socket.bind("can0", isotp.Address(isotp.AddressingMode.Normal_29bits, rxid=self.rxid, txid=self.txid))
-
 		return True
 
 
@@ -258,8 +254,7 @@ class mbe:
 			logging.info(pprint.pformat(command))
 
 			if test_mode:
-				# Some dummy data for RT_ENGINESPEED
-				response = response_data[page]
+				response = response_data[page] 						 # Some dummy data for RT_ENGINESPEED
 			else:
 				self.socket.send(command)
 
