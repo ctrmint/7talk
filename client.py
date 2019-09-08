@@ -119,16 +119,11 @@ def main():
                     mypacket = DataPacket(fmt, short_desc, value)
                     controller.send_packet(mypacket)
 
-
             if stdout_dict:
                 pp = pprint.PrettyPrinter(indent=10)
                 pp.pprint(results)
 
-
             time.sleep(0.125)
-
-        else:
-            test_routine(fmt)                                               # Test routine
 
 if __name__ == '__main__':
     main()
