@@ -20,10 +20,8 @@
 #       data_txt_as_list = list of instances of DataText, used to print data on the screen.
 # ----------------------------------------------------------------------------------------------------------------------
 
-import os, sys, time, datetime, socket, random, binascii, struct
-import can
-from can.interfaces.socketcan import SocketcanBus
-import isotp
+import os, sys, time, datetime, random, binascii, struct
+import socket
 from dash_support import *
 from colours import *
 from gauges_text import *
