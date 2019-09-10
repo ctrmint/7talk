@@ -28,15 +28,15 @@ def send_data(packed_data):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creating socket with these two lines
     server_address = (server_addr, server_udp_port)  # need to be in loop otherwise errors!
 
-    try:  #                                  try ...
-        sock.connect(server_address)        # and connect to the dash server socket
-        try:                                # connected...
-            sock.send(packed_data)          # send the packet.
+    try:                                                    # try ...
+        sock.connect(server_address)                        # and connect to the dash server socket
+        try:                                                # connected...
+            sock.send(packed_data)                          # send the packet.
         finally:
-            sock.close()                    # now close the socket!
-            success = True                  # Unused at the moment, road map to add future functionality
+            sock.close()                                    # now close the socket!
+            success = True                                  # Unused at the moment, road map to add future functionality
 
-    except socket.error as msg:             # initial try to connect failed!!
+    except socket.error as msg:                             # initial try to connect failed!!
         print("Couldn't connect with the server: %s." % msg)                      # error and try again with while loop!
         success = False
     return success
@@ -68,7 +68,7 @@ def main():
     fmt = struct.Struct('I 20s I')                                                 # format of packing structure for UDP
     controller = SendDataController()                                              # UDP transmission controller
 
-    results = dict()                                                            # ISOTP results dictionary
+    results = dict()                                                               # ISOTP results dictionary
 
     if mbe.test_mode:
         variables_to_follow = vars_to_follow_test_mode
