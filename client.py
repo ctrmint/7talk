@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # ----------------------------------------------------------------------------------------------------------------------
-# Caterham 7 Dash
-# Revision  :   0.1
+# Caterham 7 Dash Client
+# Revision  :   1.0
 # Author    :   Mark Rodman
 # ----------------------------------------------------------------------------------------------------------------------
 # Description
@@ -14,42 +14,21 @@
 #
 # ----------------------------------------------------------------------------------------------------------------------
 
-import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, math
+import binascii, struct, sys, argparse, logging, csv, pprint, math
 import mbe                                                     # coded by John Martin / PurpleMeanie, forked slightly
 from dash_support import *
 from dash_client_udp import *
 from logs import log_memory
-from time import sleep, strftime, time
+from time import sleep
 import json
 from types import SimpleNamespace
 
-def packing(fmt, unpacked_data):
-    packed_data = fmt.pack(*unpacked_data)
-    return packed_data
-
-
-#def send_data(packed_data):
- #   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creating socket with these two lines
-  #  server_address = (server_addr, server_udp_port)  # need to be in loop otherwise errors!
-
-   # try:                                                    # try ...
-    #    sock.connect(server_address)                        # and connect to the dash server socket
-     #   try:                                                # connected...
-      #      sock.send(packed_data)                          # send the packet.
-      #  finally:
-      #      sock.close()                                    # now close the socket!
-       #     success = True                                  # Unused at the moment, road map to add future functionality
-
-    #except socket.error as msg:                             # initial try to connect failed!!
-     #   print("Couldn't connect with the server: %s." % msg)                      # error and try again with while loop!
-      #  success = False
-    #return success
 
 
 def main():
-    with open('client_cfg.txt') as json_data_file:
-        cfg_vals = json.load(json_data_file)
-    cfg = SimpleNamespace(**cfg_vals)
+    with open('client_cfg.txt') as json_data_file:                            # Open configuration file
+        cfg_vals = json.load(json_data_file)                                  # load json data
+    cfg = SimpleNamespace(**cfg_vals)                                         # namespace object from json
 
     # Allocate some of the cfg vals to local vars now.
     UDP_tx = cfg.UDP_Dash['UDP_Tx']                                           # Boolean, whether to transmit to dash
@@ -70,7 +49,6 @@ def main():
 
     parser = argparse.ArgumentParser(prog=cfg.App["usage"], description=cfg.App["desc"])
     parser.add_argument('--version', '-V', action='version', version='%(prog)s ' + version)
-
     args = parser.parse_args()
 
     logging_level = getattr(logging, cfg.CAN["mbe_class_log_level"], None)
