@@ -9,17 +9,17 @@ vars_to_follow_test_mode = [
 
 vars_to_follow_live = [
                 	'RT_THROTTLESITE1',
-            #    	'RT_BATTERYVOLTAGECOMP',
+                	'RT_BATTERYVOLTAGECOMP',
             #    	'RT_IGNITIONADVANCEBANK1',
-            #    	'RT_TPSVSSPEEDIGN+TRIM1',
-            #    	'RT_INJECTIONTIMEA',
-            #    	'RT_COOLANTTEMP1(LIM)',
-            #       'RT_AIRTEMP1(LIM)',
+                	'RT_TPSVSSPEEDIGN+TRIM1',
+                	'RT_INJECTIONTIMEA',
+                	'RT_COOLANTTEMP1(LIM)',
+                   'RT_AIRTEMP1(LIM)',
             #    	'RT_MAPPINGPOT1LIM',
             #    	'RT_MAPPINGPOT2LIM',
-            #    	'RT_COOLANTFUELFACTOR',
+                	'RT_COOLANTFUELFACTOR',
             #       'RT_BATTERYVOLTAGE(LIM)',
-            #    	'RT_AIRTEMPFUELFACTOR',
+                	'RT_AIRTEMPFUELFACTOR',
             #    	'RT_DUTYCYCLEA',
             #    	'RT_TPSFUEL+TRIMBANK1',
             #       'RT_SOFTCUTTIME',
@@ -28,8 +28,8 @@ vars_to_follow_live = [
             #    	'RT_ENGINERUNTIME',
             #       'RT_ECUSTATUS',
             #    	'RT_BAROSCALEDLIM',
-            #    	'RT_THROTTLEANGLEINCREASING',
+                	'RT_THROTTLEANGLEINCREASING',
             #    	'RT_BAROFUELCOMP',
             #    	'RT_CRANKCOUNT',
-            #        'RT_ENGINESPEED'
+                    'RT_ENGINESPEED'
         ]

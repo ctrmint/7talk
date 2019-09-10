@@ -111,7 +111,7 @@ def main():
 
     ecu.bind()
 
-    log_handler = log_memory("log.txt", 10, time_delay, verbose=True)
+    log_handler = log_memory("logs/log.txt", 100, time_delay, verbose=False)
 
     while 1:
         # get fresh can data or not!
