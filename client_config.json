@@ -1,0 +1,51 @@
+{
+  "UDP_Dash": {
+    "host": "localhost",
+    "server_port":61616,
+    "UDP_Tx": true,
+    "fmt_struct": "I 20s I"
+  },
+
+  "CAN": {
+    "interface": "can0",
+    "time_delay":0.19,
+    "query_id":"0x0cbe1101",
+    "response_id":"0x0cbe0111",
+    "variable_file": "test.json",
+    "mbe_class_log_level": "ERROR",
+    "mbe_class_log_file": "/logs/mbe.log",
+    "vars_test":["RT_ENGINESPEED",
+                                  "RT_AIRTEMP1(LIM)",
+                                  "RT_COOLANTTEMP1(LIM)",
+                                  "RT_BATTERYVOLTAGE(LIM)",
+                                  "RT_SOFTCUTTIME",
+                                  "RT_HARDCUTTIME"
+                                ],
+    "vars_live": [    "RT_THROTTLESITE1",
+                                  "RT_TPSVSSPEEDIGN+TRIM1",
+                	              "RT_COOLANTTEMP1(LIM)",
+                                  "RT_AIRTEMP1(LIM)",
+                                  "RT_COOLANTFUELFACTOR",
+                                  "RT_BATTERYVOLTAGE(LIM",
+                                  "RT_AIRTEMPFUELFACTOR",
+                                  "RT_TPSFUEL+TRIMBANK1",
+                                  "RT_THROTTLEANGLE1(RAW)",
+                                  "RT_THROTTLEANGLEINCREASING",
+                                  "RT_ENGINESPEED"
+                            ]
+  },
+
+
+  "logs": {
+    "logger": true,
+    "filename": "logs/can_client.log",
+    "log_line_cache": 50,
+    "verbose": false,
+    "Flog_line": "not used yet"
+  },
+
+  "std_out": {
+    "std_out": false,
+    "pp_indent":10
+  }
+}

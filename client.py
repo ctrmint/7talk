@@ -14,70 +14,54 @@ import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, ma
 import mbe                                                     # coded by John Martin / PurpleMeanie, forked slightly
 from dash_support import *
 from dash_client_udp import *
-from dash_client_support import *
 from logs import log_memory
 from time import sleep, strftime, time
-
+import json
+from types import SimpleNamespace
 
 def packing(fmt, unpacked_data):
     packed_data = fmt.pack(*unpacked_data)
     return packed_data
 
 
-def send_data(packed_data):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creating socket with these two lines
-    server_address = (server_addr, server_udp_port)  # need to be in loop otherwise errors!
+#def send_data(packed_data):
+ #   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creating socket with these two lines
+  #  server_address = (server_addr, server_udp_port)  # need to be in loop otherwise errors!
 
-    try:                                                    # try ...
-        sock.connect(server_address)                        # and connect to the dash server socket
-        try:                                                # connected...
-            sock.send(packed_data)                          # send the packet.
-        finally:
-            sock.close()                                    # now close the socket!
-            success = True                                  # Unused at the moment, road map to add future functionality
+   # try:                                                    # try ...
+    #    sock.connect(server_address)                        # and connect to the dash server socket
+     #   try:                                                # connected...
+      #      sock.send(packed_data)                          # send the packet.
+      #  finally:
+      #      sock.close()                                    # now close the socket!
+       #     success = True                                  # Unused at the moment, road map to add future functionality
 
-    except socket.error as msg:                             # initial try to connect failed!!
-        print("Couldn't connect with the server: %s." % msg)                      # error and try again with while loop!
-        success = False
-    return success
-
-
-def test_routine(fmt):                                      # test routine designed to test comms, uses random data etc.
-    # needs rewriting to support the new class.
-    packet_counter = 0
-    while packet_counter < 10:                    # This section is a little verbose, designed to make it more readable.
-        for i in range(len(data_value_labels)):
-            name_string = str(data_value_labels[i]).ljust(20, " ")   # ensure the name string is 20 chars (equal length)
-            a = i                                                    # historic use of a, so a becomes i.
-            b = packet_counter                                       # historic use of b, packet counter is added to b
-            c = bytearray(name_string.encode('utf-8'))               # historic use of c, encoded name_string
-            d = random.randint(0, 130)                               # historic use of d, random val,
-            values = (a, b, c, d)                                    # put the lot together, yes long winded!
-            packed_data = packing(fmt, values)                       # pack the data to be sent via socket
-            send_data(packed_data)                                   # send packed data via function.
-        if packet_counter < 10:                                      # Increment the packet counter if < 10
-            packet_counter += 1                                      # as above.
-    return                                                           #  ------
+    #except socket.error as msg:                             # initial try to connect failed!!
+     #   print("Couldn't connect with the server: %s." % msg)                      # error and try again with while loop!
+      #  success = False
+    #return success
 
 
 def main():
-    UDP_tx = True
-    stdout_dict = False
-    logger = True
-    time_delay = 0.18
+    with open('client_config.json') as json_data_file:
+        cfg_vals = json.load(json_data_file)
+    cfg = SimpleNamespace(**cfg_vals)
+
+    UDP_tx = cfg.UDP_Dash['UDP_Tx']
+    stdout_dict = cfg.std_out['std_out']
+    logger = cfg.logs["logger"]
+    time_delay = cfg.CAN["time_delay"]
     fmt = struct.Struct('I 20s I')                                                 # format of packing structure for UDP
     controller = SendDataController()                                              # UDP transmission controller
 
     results = dict()                                                               # ISOTP results dictionary
 
     if mbe.test_mode:
-        variables_to_follow = vars_to_follow_test_mode
+        variables_to_follow = (cfg.CAN["vars_test"])                               # now in json
     else:
-        variables_to_follow = vars_to_follow_live
+        variables_to_follow = (cfg.CAN["vars_live"])                               # now in json
 
     parser = argparse.ArgumentParser(prog='UniHatRevs', description='Shows rev.')
-    parser.add_argument('--interface', '-i', help='The can interface to open', required=True)
-    parser.add_argument('--variables', '-v', help='Input MBE variables filename', required=True)
     parser.add_argument('--query_id', '-q', help='CAN query ID (default 0x0cbe1101)', default=0x0cbe1101)
     parser.add_argument('--response_id', '-r', help='CAN resdponse ID (default 0x0cbe0111', default=0x0cbe0111)
     parser.add_argument('--loglevel', '-l', help='Logging level to show',
@@ -91,14 +75,13 @@ def main():
     logging.basicConfig(level=logging_level, filename=args.logfile, filemode='w')
 
     ecu = mbe.mbe()
-    ret = ecu.set_options(args.variables, args.query_id, args.response_id, args.interface)
+    ret = ecu.set_options(cfg.CAN["variable_file"], args.query_id, args.response_id, cfg.CAN["interface"])
 
     if not ret:
         logging.error("Unable to set options")
         exit()
 
     logging.info("Added all the variables we expected")
-
 
     if not ret:
         logging.error("Unable to set options")
@@ -111,7 +94,7 @@ def main():
 
     ecu.bind()
 
-    log_handler = log_memory("logs/log.txt", 100, time_delay, verbose=False)
+    log_handler = log_memory(cfg.logs["filename"], cfg.logs["log_line_cache"], time_delay, cfg.logs["verbose"])
 
     while 1:
         # get fresh can data or not!
@@ -125,13 +108,13 @@ def main():
                     controller.send_packet(mypacket)
 
             if stdout_dict:
-                pp = pprint.PrettyPrinter(indent=10)
+                pp = pprint.PrettyPrinter(indent=cfg.std_out["pp_indent"])
                 pp.pprint(results)
 
             if logger:
                 log_handler.new_log(results)
 
-            sleep(0.1)
+            sleep(time_delay)
 
 if __name__ == '__main__':
     main()
