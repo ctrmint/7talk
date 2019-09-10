@@ -8,6 +8,7 @@
 # Client.py is a test client for the Dash.py core pygame code.
 # Client sends UDP packets to dash.py for display.
 # Client can be used to test the function of dash.py
+# Now with json support
 # ----------------------------------------------------------------------------------------------------------------------
 
 import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, math
