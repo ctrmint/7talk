@@ -1,6 +1,7 @@
 {
   "App": {
-    "usage": "\n Command lines options deprecated.\n Please use 'client_config.json' to configure operation.\n Remaining options list below.\n"
+    "usage": "\n Command lines options deprecated.\n Please use 'client_cfg.txt' to configure operation.\n Remaining options list below.\n",
+    "desc": "Retrieves ECU CAN data.\n  Logs locally and forwards via UDP to Dash server. \n"
   },
 
   "UDP_Dash": {
