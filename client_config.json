@@ -1,4 +1,8 @@
 {
+  "App": {
+    "usage": "\n Command lines options deprecated.\n Please use 'client_config.json' to configure operation.\n Remaining options list below.\n"
+  },
+
   "UDP_Dash": {
     "host": "localhost",
     "server_port":61616,
@@ -12,8 +16,8 @@
     "query_id":"0x0cbe1101",
     "response_id":"0x0cbe0111",
     "variable_file": "test.json",
-    "mbe_class_log_level": "ERROR",
-    "mbe_class_log_file": "/logs/mbe.log",
+    "mbe_class_log_level": "INFO",
+    "mbe_class_log_file": "logs/mbe.log",
     "vars_test":["RT_ENGINESPEED",
                                   "RT_AIRTEMP1(LIM)",
                                   "RT_COOLANTTEMP1(LIM)",

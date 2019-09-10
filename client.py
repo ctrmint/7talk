@@ -9,6 +9,9 @@
 # Client sends UDP packets to dash.py for display.
 # Client can be used to test the function of dash.py
 # Now with json support
+#    JSON file does not support comments, JSON file comments below (indented)
+#           OPTIONS for 'mbe_class_log_level' = 'INFO', 'DEBUG', 'WARNING', 'ERROR', 'NONE', recommend ERROR
+#
 # ----------------------------------------------------------------------------------------------------------------------
 
 import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, math
@@ -62,21 +65,17 @@ def main():
     else:
         variables_to_follow = (cfg.CAN["vars_live"])                               # now in json
 
-    parser = argparse.ArgumentParser(prog='UniHatRevs', description='Shows rev.')
-    parser.add_argument('--query_id', '-q', help='CAN query ID (default 0x0cbe1101)', default=0x0cbe1101)
-    parser.add_argument('--response_id', '-r', help='CAN resdponse ID (default 0x0cbe0111', default=0x0cbe0111)
-    parser.add_argument('--loglevel', '-l', help='Logging level to show',
-                        choices=['INFO', 'DEBUG', 'WARNING', 'ERROR', 'NONE'], default="ERROR")
-    parser.add_argument('--logfile', '-f', help='If set logging will be sent to this file')
+    parser = argparse.ArgumentParser(prog=cfg.App["usage"], description='Shows rev.')
     parser.add_argument('--version', '-V', action='version', version='%(prog)s ' + version)
 
     args = parser.parse_args()
 
-    logging_level = getattr(logging, args.loglevel, None)
-    logging.basicConfig(level=logging_level, filename=args.logfile, filemode='w')
+    logging_level = getattr(logging, cfg.CAN["mbe_class_log_level"], None)
+    logging.basicConfig(level=logging_level, filename=cfg.CAN["mbe_class_log_file"], filemode='w')
 
     ecu = mbe.mbe()
-    ret = ecu.set_options(cfg.CAN["variable_file"], args.query_id, args.response_id, cfg.CAN["interface"])
+    ret = ecu.set_options(cfg.CAN["variable_file"], (int(cfg.CAN["query_id"], 16)), (int(cfg.CAN["response_id"], 16)),
+                          cfg.CAN["interface"])
 
     if not ret:
         logging.error("Unable to set options")
