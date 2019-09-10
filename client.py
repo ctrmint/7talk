@@ -10,11 +10,13 @@
 # Client can be used to test the function of dash.py
 # ----------------------------------------------------------------------------------------------------------------------
 
-import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, math, time
+import binascii, socket, struct, sys, random, argparse, logging, csv, pprint, math
 import mbe                                                     # coded by John Martin / PurpleMeanie, forked slightly
 from dash_support import *
 from dash_client_udp import *
 from dash_client_support import *
+from logs import log_memory
+from time import sleep, strftime, time
 
 
 def packing(fmt, unpacked_data):
@@ -60,9 +62,11 @@ def test_routine(fmt):                                      # test routine desig
 
 def main():
     UDP_tx = True
-    stdout_dict = True
-    fmt = struct.Struct('I 20s I')                                            # format of packing structure for UDP
-    controller = SendDataController()                                         # UDP transmission controller
+    stdout_dict = False
+    logger = True
+    time_delay = 0.18
+    fmt = struct.Struct('I 20s I')                                                 # format of packing structure for UDP
+    controller = SendDataController()                                              # UDP transmission controller
 
     results = dict()                                                            # ISOTP results dictionary
 
@@ -107,6 +111,7 @@ def main():
 
     ecu.bind()
 
+    log_handler = log_memory("log.txt", 10, time_delay, verbose=True)
 
     while 1:
         # get fresh can data or not!
@@ -123,7 +128,10 @@ def main():
                 pp = pprint.PrettyPrinter(indent=10)
                 pp.pprint(results)
 
-            time.sleep(0.1)
+            if logger:
+                log_handler.new_log(results)
+
+            sleep(0.1)
 
 if __name__ == '__main__':
     main()

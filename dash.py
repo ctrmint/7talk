@@ -77,7 +77,7 @@ def draw_screen_borders(windowSurface):
 
     # X values
     x1 = 0
-    x2 = 147
+    x2 = 205
 
     # Y values
     y1 = 13
@@ -228,7 +228,7 @@ def processing_loop(sock):
 
                 # repeat similar process here, for the data values.
                 display_table_readings.append(DataText(data_label, windowSurface, data_value,
-                                                          GREEN, TEXT_BG, dataFont, (x+160), y))
+                                                          GREEN, TEXT_BG, dataFont, (x+210), y))
 
                 data_points.append(Can_val(data_label, data_value))    #instantiate instance of class for new data label
 
