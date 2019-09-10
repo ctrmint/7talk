@@ -47,15 +47,18 @@ def packing(fmt, unpacked_data):
 
 
 def main():
-    with open('client_config.json') as json_data_file:
+    with open('client_cfg.txt') as json_data_file:
         cfg_vals = json.load(json_data_file)
     cfg = SimpleNamespace(**cfg_vals)
 
-    UDP_tx = cfg.UDP_Dash['UDP_Tx']
-    stdout_dict = cfg.std_out['std_out']
-    logger = cfg.logs["logger"]
-    time_delay = cfg.CAN["time_delay"]
-    fmt = struct.Struct('I 20s I')                                                 # format of packing structure for UDP
+    # Allocate some of the cfg vals to local vars now.
+    UDP_tx = cfg.UDP_Dash['UDP_Tx']                                           # Boolean, whether to transmit to dash
+    stdout_dict = cfg.std_out['std_out']                                      # Boolean, write to std_out
+    logger = cfg.logs["logger"]                                               # Boolean, write client logs, not mbe logs
+
+    time_delay = cfg.CAN['time_delay']                                        # CAN query sleep timer.
+
+    fmt = struct.Struct(cfg.UDP_Dash['fmt_struct'])                                # format of packing structure for UDP
     controller = SendDataController()                                              # UDP transmission controller
 
     results = dict()                                                               # ISOTP results dictionary
@@ -65,7 +68,7 @@ def main():
     else:
         variables_to_follow = (cfg.CAN["vars_live"])                               # now in json
 
-    parser = argparse.ArgumentParser(prog=cfg.App["usage"], description='Shows rev.')
+    parser = argparse.ArgumentParser(prog=cfg.App["usage"], description=cfg.App["desc"])
     parser.add_argument('--version', '-V', action='version', version='%(prog)s ' + version)
 
     args = parser.parse_args()
