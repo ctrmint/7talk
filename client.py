@@ -86,7 +86,7 @@ def main():
                 short_desc = str((results.get(key))['short_desc']).lstrip()         # pull the short_desc from the dict
                 if UDP_tx:
                     mypacket = DataPacket(fmt, short_desc, value)
-                    controller.send_packet(mypacket)
+                    controller.send_packet(mypacket, (cfg.UDP_Dash['host']), (cfg.UDP_Dash['port']) )
 
             if stdout_dict:
                 pp = pprint.PrettyPrinter(indent=cfg.std_out["pp_indent"])

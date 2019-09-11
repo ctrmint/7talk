@@ -20,7 +20,7 @@
 
   "Display": {
     "width": 800,
-    "height": 400,
+    "height": 480,
     "title": "Caterham Super 7 MBE Dashboard",
     "display_line_width": 2,
     "line_width": 2

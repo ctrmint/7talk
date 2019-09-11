@@ -28,40 +28,40 @@ from pygame.locals import *
 from candata import *
 from types import SimpleNamespace
 
+def pygame_setup(cfg):
+    pygame.init()                                                 # Init pygame
+    pygame.font.init()                                            # Init pygame fonts
+    pygame.mixer.quit()                                           # BUG FIX, Quitting mixer stops it from hogging cpu!!!
 
-# Initial setup, needs restructuring, shouldn't be global!
-pygame.init()                                                     # Init pygame
-pygame.font.init()                                                # Init pygame fonts
-pygame.mixer.quit()                                               # BUG FIX, Quitting mixer stops it from hogging cpu!!!
+    POLLCAN = pygame.USEREVENT + 1                                # Pygame event for CANBus
+    pygame.time.set_timer(POLLCAN, PollCAN_schedule)              # No longer used as intended but weird still required!
+    clock = pygame.time.Clock()                                   # Setup PG clock, critical component to runtime.
 
+    # sort display surface
+    gameDisplay = pygame.display.set_mode((cfg.Display['width'], cfg.Display['height']))
+    windowSurface = pygame.display.set_mode((cfg.Display['width'], cfg.Display['height']), 0, 32)
+    pygame.display.set_caption(display_title)
+    windowSurface.fill(STARTCOLOUR)
 
-POLLCAN = pygame.USEREVENT + 1                                    # Pygame event for CANBus
-pygame.time.set_timer(POLLCAN, PollCAN_schedule)                  # No longer used as intended but weird still required!
-clock = pygame.time.Clock()                                       # Setup PG clock, critical component to runtime.
-
-# sort display surface
-gameDisplay = pygame.display.set_mode((display_width, display_height))
-windowSurface = pygame.display.set_mode((display_width, display_height), 0, 32)
-pygame.display.set_caption(display_title)
-windowSurface.fill(STARTCOLOUR)
-
-# setup fonts -------- Needs sorting along with the rest of the pygame start up code
-available_fonts = pygame.font.get_fonts()
-for font in range(len(available_fonts)):
-    if available_fonts[font] == LCD_font:
-        lcd_fontpath = pygame.font.match_font(available_fonts[font])
-    if available_fonts[font] == 'hack':
-        hack_font = pygame.font.match_font(available_fonts[font])
-        rpmFont = pygame.font.Font(hack_font, RPM_FONTSIZE)
-        labelFont = pygame.font.Font(hack_font, LABEL_FONTSIZE)
-        dataFont = pygame.font.Font(hack_font, DATA_FONTSIZE)
-    else:
-        if available_fonts[font] == 'freemono':
+    # setup fonts
+    available_fonts = pygame.font.get_fonts()
+    for font in range(len(available_fonts)):
+        if available_fonts[font] == LCD_font:
+            lcd_fontpath = pygame.font.match_font(available_fonts[font])
+        if available_fonts[font] == 'hack':
             hack_font = pygame.font.match_font(available_fonts[font])
             rpmFont = pygame.font.Font(hack_font, RPM_FONTSIZE)
             labelFont = pygame.font.Font(hack_font, LABEL_FONTSIZE)
             dataFont = pygame.font.Font(hack_font, DATA_FONTSIZE)
-# ----------------------------------------------------------------------------------
+        else:
+            if available_fonts[font] == 'freemono':
+                hack_font = pygame.font.match_font(available_fonts[font])
+                rpmFont = pygame.font.Font(hack_font, RPM_FONTSIZE)
+                labelFont = pygame.font.Font(hack_font, LABEL_FONTSIZE)
+                dataFont = pygame.font.Font(hack_font, DATA_FONTSIZE)
+
+    return hack_font, rpmFont, labelFont, dataFont, gameDisplay, windowSurface, clock
+
 
 def demo_rpm(demo_rpm_val):
     if demo_rpm_val < max_rpm:
@@ -104,6 +104,8 @@ def draw_screen_borders(windowSurface):
     return
 
 def processing_loop(sock, cfg):
+    hack_font, rpmFont, labelFont, dataFont, gameDisplay, windowSurface, clock = pygame_setup(cfg)
+
     unpacker = struct.Struct(cfg.UDP_Dash['fmt_struct'])
 
     # Control parameters
@@ -247,6 +249,7 @@ def processing_loop(sock, cfg):
     return
 
 def main():
+
     with open('server_cfg.txt') as json_data_file:                            # Open configuration file
         cfg_vals = json.load(json_data_file)                                  # load json data
     cfg = SimpleNamespace(**cfg_vals)                                         # namespace object from json

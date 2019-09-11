@@ -16,13 +16,6 @@ version = str(VERSION)
 APP_NAME = "7 Talk Dashboard."
 WELCOME = "Welcome to " + APP_NAME + " Build:" + str(VERSION)
 
-
-#CAN / ISOTP COMMS PARAMETERS
-mybus = 'vcan0'
-bitrate = 500000
-bustype= 'socketcan'
-Rxid = 0x0cbe0111
-Txid = 0x0cbe1101
 ret_count_val = 3
 
 
@@ -36,8 +29,8 @@ debug_view = False
 live = False
 
 # GENERAL DISPLAY SETTINGS
-display_width = 800
 display_height = 480
+display_width = 800
 display_title = 'Caterham Super 7 MBE Dashboard'
 display_line_width = 2
 line_width = 2

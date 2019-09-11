@@ -30,14 +30,14 @@ class DataPacket(object):
         self.value = (self.counter, self.msg_label_b, self.msg_value)
         self.packed_msg = self.fmt.pack(*self.value)
 
-    def send(self):
+    def send(self, host, port):
         value = (self.counter, self.msg_label_b, self.msg_value)
         packed_msg = self.fmt.pack(*value)
-        self.transmit(packed_msg)
+        self.transmit(packed_msg, host, port)
 
-    def transmit(self, payload):
+    def transmit(self, payload, host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                  # creating socket with these two lines
-        server_address = (server_addr, server_udp_port)                           # need to be in loop otherwise errors!
+        server_address = (host, port)                           # need to be in loop otherwise errors!
 
         try:                                                  # try ...
             sock.connect(server_address)                      # and connect to the dash server socket
@@ -59,7 +59,8 @@ class SendDataController(object):                          # Pretty basic at the
     def __init__(self, counter_dict = {}):                     # @ instantiation set up a tracking dictionary
         self.counter_dict = counter_dict                       # This will track instances of each msg type
                                                                # handy for tracking message loss etc.
-    def send_packet(self, packet):
+    def send_packet(self, packet, host, port):
+        PACKET_COUNTER_LIMIT = 999
         if packet.msg_label not in self.counter_dict:          # has msg_type (index) been seen before and added to dict
             self.counter_dict.update({packet.msg_label: 0})    # Nope, so add a kv pair to dictionary for msg type index
 
@@ -69,7 +70,7 @@ class SendDataController(object):                          # Pretty basic at the
         self.counter_dict[packet.msg_label] = new_val           # this probably wants to be more efficient!
 
         packet.counter = new_val                               # now set counter in the packet.
-        packet.send()
+        packet.send(host, port)
 
     def __str__(self):
         return str(self.__class__) + '\n' + '\n'.join(('{} = {}'.format(item,

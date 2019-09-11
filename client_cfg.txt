@@ -6,9 +6,10 @@
 
   "UDP_Dash": {
     "host": "localhost",
-    "server_port":61616,
+    "port":61616,
     "UDP_Tx": true,
-    "fmt_struct": "I 20s I"
+    "fmt_struct": "I 20s I",
+    "packet_counter": 999
   },
 
   "CAN": {
