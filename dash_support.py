@@ -19,10 +19,6 @@ WELCOME = "Welcome to " + APP_NAME + " Build:" + str(VERSION)
 ret_count_val = 3
 
 
-#EVENT TIMERS AND PYGAME CLOCK
-PollCAN_schedule = 1 # milliseconds
-CLOCK_VAL = 60
-
 #CLASS STUFF
 buffer_limit = 20
 debug_view = False
@@ -51,12 +47,7 @@ DATA_FONTSIZE =  16
 
 
 #RPM Display stuff
-max_rpm = 7700
 rpm_delay = 2000
-rev_image1 = 'assets/shiftbar/rev1.jpg'
-rev_image2 = 'assets/shiftbar/rev2.jpg'
-rev_image3 = 'assets/shiftbar/rev3.jpg'
-rev_image_shift = 'assets/shiftbar/shift.jpg'
 RPM_COVER_RECT_START_HEIGHT = 15
 RPM_COVER_RECT_END_HEIGHT = 54
 

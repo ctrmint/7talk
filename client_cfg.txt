@@ -20,7 +20,7 @@
     "variable_file": "test.json",
     "mbe_class_log_level": "INFO",
     "mbe_class_log_file": "logs/mbe.log",
-    "vars_test":["RT_ENGINESPEED",
+    "vars_test":[
                                   "RT_AIRTEMP1(LIM)",
                                   "RT_COOLANTTEMP1(LIM)",
                                   "RT_BATTERYVOLTAGE(LIM)",

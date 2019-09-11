@@ -97,11 +97,15 @@ class DisplayDialGauge(object):
         Note.
             Needs making more generic for general use, some values have been hard coded during development.
     """
-    data_per_degree = max_rpm / 225
-    horizontal_line_in_rpm = 180 * data_per_degree
+    #data_per_degree = max_rpm / 225
+    #horizontal_line_in_rpm = 180 * data_per_degree
     PI = math.pi
 
-    def __init__(self, wsurface, outer_arc_square, border_thickness, colour):
+    def __init__(self, wsurface, outer_arc_square, border_thickness, colour, max_rpm):
+        self.max_rpm = max_rpm
+        self.data_per_degree = max_rpm / 225
+        self.horizontal_line_in_rpm = 180 * self.data_per_degree
+
         self.data_value = 0
         self.outer_arc_square = outer_arc_square
         self.surface = wsurface
@@ -116,7 +120,7 @@ class DisplayDialGauge(object):
 
         # Default arc bands, pre-calculated.
         # BAND 0
-        self.band_0_arc_start = (180 - (self.band_0_limit_rpm / DisplayDialGauge.data_per_degree)) * (self.PI/180)
+        self.band_0_arc_start = (180 - (self.band_0_limit_rpm / self.data_per_degree)) * (self.PI/180)
         self.band_0_arc_end = self.PI
         # BAND 1
         self.band_1_arc_start = 0
@@ -151,16 +155,16 @@ class DisplayDialGauge(object):
     def data_arc(self, data_value):
         # calculations are quadrant specific.
         self.data_value = data_value
-        if data_value > DisplayDialGauge.horizontal_line_in_rpm:         # Over > 6160rpm which is center line on gauge.
+        if data_value > self.horizontal_line_in_rpm:         # Over > 6160rpm which is center line on gauge.
             # 3rd quadrant calculations
-            remaining_rpm = self.data_value - DisplayDialGauge.horizontal_line_in_rpm
-            remaining_degrees = remaining_rpm / DisplayDialGauge.data_per_degree
+            remaining_rpm = self.data_value - self.horizontal_line_in_rpm
+            remaining_degrees = remaining_rpm / self.data_per_degree
             start_degrees = 360 - remaining_degrees
             start_rads = start_degrees * (self.PI / 180)
             end_rads = 0
 
-            if data_value > ((max_rpm - DisplayDialGauge.horizontal_line_in_rpm) / 2) + \
-                    DisplayDialGauge.horizontal_line_in_rpm:
+            if data_value > ((self.max_rpm - self.horizontal_line_in_rpm) / 2) + \
+                    self.horizontal_line_in_rpm:
                 data_colour = RED
 
             else:
@@ -178,7 +182,7 @@ class DisplayDialGauge(object):
 
         else:
             # Calculate quadrant 1 and 2
-            remaining_degrees = data_value / DisplayDialGauge.data_per_degree
+            remaining_degrees = data_value / self.data_per_degree
             start_degrees = 180 - remaining_degrees
             start_rads = start_degrees * (self.PI / 180)
             if data_value > self.band_0_limit_rpm:

@@ -7,7 +7,7 @@
 
   "Timers":{
     "PollCAN_schedule":1,
-    "CLOCK_VAL":60
+    "Clock_value":50
   },
 
   "UDP_Dash": {
@@ -46,7 +46,7 @@
 
   "Fonts": {
     "LCD_font": "open24displayst",
-    "default_fontszie": 30,
+    "default_fontsize": 30,
     "RPM_fontsize": 70,
     "Label_fontsize": 14,
     "Data_fontsize": 16
@@ -63,6 +63,9 @@
   "RPM": {
     "max_rpm": 7700,
     "rpm_delay": 2000,
+    "band1":2500,
+    "band2":6600,
+    "band3":7500,
     "rpm_cover_rect_start_height": 15,
     "rpm_cover_rect_end_neight": 54
   },

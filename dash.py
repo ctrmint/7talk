@@ -33,9 +33,9 @@ def pygame_setup(cfg):
     pygame.font.init()                                            # Init pygame fonts
     pygame.mixer.quit()                                           # BUG FIX, Quitting mixer stops it from hogging cpu!!!
 
-    POLLCAN = pygame.USEREVENT + 1                                # Pygame event for CANBus
-    pygame.time.set_timer(POLLCAN, PollCAN_schedule)              # No longer used as intended but weird still required!
-    clock = pygame.time.Clock()                                   # Setup PG clock, critical component to runtime.
+    POLLCAN = pygame.USEREVENT + 1                                      # Pygame event for CANBus
+    pygame.time.set_timer(POLLCAN, cfg.Timers['PollCAN_schedule'])      #  weird still required!
+    clock = pygame.time.Clock()                                         # Setup PG clock, critical component to runtime.
 
     # sort display surface
     gameDisplay = pygame.display.set_mode((cfg.Display['width'], cfg.Display['height']))
@@ -123,15 +123,17 @@ def processing_loop(sock, cfg):
                             ([RPM_LSB_TXT, TEXT_BG]), [420, 160])
 
     # declare rpm gauge instance and display bar for zero value
-    rpm_bar = DisplayBarGauge("rpm", 0, max_rpm, windowSurface,
-                              ([rev_image1, rev_image2, rev_image3, rev_image_shift]),
-                              GEN_BACKGROUND, ([10, 15]), ([2500, 6600, 7500]))
+    rpm_bar = DisplayBarGauge("rpm", 0, cfg.RPM['max_rpm'], windowSurface,
+                              ([cfg.Images['rev_image1'], cfg.Images['rev_image2'], cfg.Images['rev_image1'],
+                                cfg.Images['rev_image_shift']]), GEN_BACKGROUND, ([10, 15]),
+                              (cfg.RPM['band1'], cfg.RPM['band2'], cfg.RPM['band3']))
 
     rpm_dial_gauge = DisplayDialGauge(windowSurface, [330, 55, 325, 325], 2,
-                                      ([GAUGE_BORDER_COLOUR, DIAL_GAUGE_WIPE_COL]))
+                                      ([GAUGE_BORDER_COLOUR, DIAL_GAUGE_WIPE_COL]), cfg.RPM['max_rpm'])
 
     trace_gauge = DisplayTraceGauge(windowSurface, ([0, 365]), 100,
-                                    ([TRACE_LINE_COL, SCROLL_WIPE_COL, TRACE_PEAK_COL]), (7800, 0), False, True)
+                                    ([TRACE_LINE_COL, SCROLL_WIPE_COL, TRACE_PEAK_COL]), (cfg.RPM['max_rpm'], 0),
+                                    False, True)
 
     #  ---------------------------------------------------------    __ Display related lists __
     reference_display_table_labels = []                     # Simple reference lookup table, easy check to
@@ -196,7 +198,8 @@ def processing_loop(sock, cfg):
             rpm_txt.update(rpm_reading.rx_val)
             trace_gauge.update(rpm_reading.rx_val)
 
-        clock.tick(CLOCK_VAL)
+        clock.tick(cfg.Timers['Clock_value'])
+
         pygame.display.update()
         while pending_data:
             connection, client_address = sock.accept()

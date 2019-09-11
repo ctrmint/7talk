@@ -95,7 +95,7 @@ def main():
             if logger:
                 log_handler.new_log(results)
 
-            sleep(time_delay)
+            sleep(0.1)
 
 if __name__ == '__main__':
     main()
