@@ -1,0 +1,75 @@
+{
+   "App": {
+     "name": "7 Talk Dashboard.",
+     "version": 0.8,
+     "author": "Mark Rodman"
+    },
+
+  "Timers":{
+    "PollCAN_schedule":1,
+    "CLOCK_VAL":60
+  },
+
+  "UDP_Dash": {
+    "host": "localhost",
+    "server_port":61616,
+    "UDP_Tx": true,
+    "fmt_struct": "I 20s I",
+    "packet_counter_limit": 999
+  },
+
+  "Display": {
+    "width": 800,
+    "height": 400,
+    "title": "Caterham Super 7 MBE Dashboard",
+    "display_line_width": 2,
+    "line_width": 2
+  },
+
+  "Splash": {
+    "tbc": "tbc"
+  },
+
+  "Sections": {
+    "title_start_x": 0,
+    "title_start_y": 35,
+    "title_end_x": 800,
+    "title_end_y": 35
+  },
+
+  "Tables": {
+    "table_start_x": 3,
+    "table_start_y": 10,
+    "table_inc_y": 30
+  },
+
+  "Fonts": {
+    "LCD_font": "open24displayst",
+    "default_fontszie": 30,
+    "RPM_fontsize": 70,
+    "Label_fontsize": 14,
+    "Data_fontsize": 16
+  },
+
+  "Images": {
+    "splash": "assets/splash/splash.jpg",
+    "rev_image1": "assets/shiftbar/rev1.jpg",
+    "rev_image2": "assets/shiftbar/rev2.jpg",
+    "rev_image3": "assets/shiftbar/rev3.jpg",
+    "rev_image_shift": "assets/shiftbar/shift.jpg"
+  },
+
+  "RPM": {
+    "max_rpm": 7700,
+    "rpm_delay": 2000,
+    "rpm_cover_rect_start_height": 15,
+    "rpm_cover_rect_end_neight": 54
+  },
+
+  "Class": {
+    "buffer_limit": 20,
+    "debug_view": false,
+    "live": false,
+    "ret_count_val": 3
+  }
+}

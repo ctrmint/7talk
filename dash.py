@@ -246,6 +246,9 @@ def processing_loop(sock):
     return
 
 def main():
+    with open('server_cfg.txt') as json_data_file:                            # Open configuration file
+        cfg_vals = json.load(json_data_file)                                  # load json data
+    cfg = SimpleNamespace(**cfg_vals)                                         # namespace object from json
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                                      # create server socket
     svr_addr = (server_addr, server_udp_port)                                                      # bind socket to port
     try:
