@@ -5,7 +5,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # Supporting parameters for 7 Dash display
 # Notes,
-#   Needs to be setup via configuration file rather than importing in this manner.  This was a quick solution during dev
+#   Needs to be setup via configuration file rather than importing in this manner.
+#   This was a quick solution during dev
+#   In the process of being retired.
 # ----------------------------------------------------------------------------------------------------------------------
 
 #Welcome string
@@ -14,14 +16,6 @@ version = str(VERSION)
 APP_NAME = "7 Talk Dashboard."
 WELCOME = "Welcome to " + APP_NAME + " Build:" + str(VERSION)
 
-#UDP Listener
-server_addr = 'localhost'
-client_addr = server_addr
-server_udp_port = 61616
-PACKET_COUNTER_LIMIT = 999
-
-# Packing structure
-#unpacker = struct.Struct('I I 20s I')
 
 #CAN / ISOTP COMMS PARAMETERS
 mybus = 'vcan0'
@@ -54,10 +48,6 @@ title_start_Y = 35
 title_end_X = display_width
 title_end_Y = title_start_Y
 
-# TABLE POSITIONING
-TABLE_START_X = 3
-TABLE_START_Y = 10
-TABLE_INC_Y = 30
 
 # FONT NAMES AND SIZES
 LCD_font = "open24displayst"
@@ -65,7 +55,6 @@ default_fontsize = 30
 RPM_FONTSIZE = 70
 LABEL_FONTSIZE = 14
 DATA_FONTSIZE =  16
-
 
 
 #RPM Display stuff

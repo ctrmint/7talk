@@ -20,13 +20,13 @@
 #       data_txt_as_list = list of instances of DataText, used to print data on the screen.
 # ----------------------------------------------------------------------------------------------------------------------
 
-import os, sys, time, datetime, random, binascii, struct
-import socket
+import os, sys, time, datetime, random, binascii, struct, json, socket
 from dash_support import *
 from colours import *
 from gauges_text import *
 from pygame.locals import *
 from candata import *
+from types import SimpleNamespace
 
 
 # Initial setup, needs restructuring, shouldn't be global!
@@ -103,8 +103,8 @@ def draw_screen_borders(windowSurface):
     pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (x1, y4), (display_width, y4), 1)
     return
 
-def processing_loop(sock):
-    unpacker = struct.Struct('I 20s I')
+def processing_loop(sock, cfg):
+    unpacker = struct.Struct(cfg.UDP_Dash['fmt_struct'])
 
     # Control parameters
     pending_data = True
@@ -146,10 +146,12 @@ def processing_loop(sock):
     while keep_running:                                     # Now start core loop used during reception.
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                keep_running = False
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYDOWN:
+                if event.key == K_q:
+                    pygame.quit()
+                    sys.exit()
                 if event.key == K_UP:
                     demo_loop = False
                     random_loop = False
@@ -200,7 +202,6 @@ def processing_loop(sock):
             try:
                 data = connection.recv(unpacker.size)
                 unpacked_data = unpacker.unpack(data)
-                #print(str(unpacked_data) + " " + str(type(unpacked_data)))
                 pending_data = False
 
             finally:
@@ -221,14 +222,14 @@ def processing_loop(sock):
 
                 # create the labels here for each value here.
                 reference_display_table_labels.append(data_label)              # add to list.
-                x = TABLE_START_X
-                y = TABLE_START_Y + (len(reference_display_table_labels) * TABLE_INC_Y)
+                x = cfg.Tables['table_start_x']
+                y = cfg.Tables['table_start_y'] + (len(reference_display_table_labels) * cfg.Tables['table_inc_y'])
                 display_table_labels.append(LabelText(data_label, windowSurface, data_label,
                                                           DARK_GREEN, TEXT_BG, labelFont, x, y))
 
                 # repeat similar process here, for the data values.
-                display_table_readings.append(DataText(data_label, windowSurface, data_value,
-                                                          GREEN, TEXT_BG, dataFont, (x+210), y))
+                display_table_readings.append(DataText(data_label, windowSurface, data_value, GREEN, TEXT_BG,
+                                                       dataFont, (x+cfg.Tables['table_value_offset']), y))
 
                 data_points.append(Can_val(data_label, data_value))    #instantiate instance of class for new data label
 
@@ -249,17 +250,19 @@ def main():
     with open('server_cfg.txt') as json_data_file:                            # Open configuration file
         cfg_vals = json.load(json_data_file)                                  # load json data
     cfg = SimpleNamespace(**cfg_vals)                                         # namespace object from json
+
+    print(cfg.App['name'])
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                                      # create server socket
-    svr_addr = (server_addr, server_udp_port)                                                      # bind socket to port
+    svr_addr = (cfg.UDP_Dash['host'], cfg.UDP_Dash['port'])                                       # bind socket to port
     try:
         sock.bind(svr_addr)
-        print(WELCOME)
         print(str(sock))
         sock.listen(1)
     except:
         print("Oops - Something went wrong")
     if sock:
-        processing_loop(sock)
+        processing_loop(sock, cfg)
 
 if __name__ == '__main__':
     main()

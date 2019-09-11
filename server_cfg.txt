@@ -12,7 +12,7 @@
 
   "UDP_Dash": {
     "host": "localhost",
-    "server_port":61616,
+    "port":61616,
     "UDP_Tx": true,
     "fmt_struct": "I 20s I",
     "packet_counter_limit": 999
@@ -40,7 +40,8 @@
   "Tables": {
     "table_start_x": 3,
     "table_start_y": 10,
-    "table_inc_y": 30
+    "table_inc_y": 30,
+    "table_value_offset": 210
   },
 
   "Fonts": {
