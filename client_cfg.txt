@@ -44,8 +44,10 @@
 
   "logs": {
     "logger": true,
+    "csv_required": true,
+    "csv_filename": "logs/can_client.csv",
     "filename": "logs/can_client.log",
-    "log_line_cache": 50,
+    "log_line_cache": 5,
     "verbose": false,
     "Flog_line": "not used yet"
   },

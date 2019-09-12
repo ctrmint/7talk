@@ -69,13 +69,14 @@ def main():
         exit()
 
     if ecu.add_variable_list_to_follow(variables_to_follow) != len(variables_to_follow):
-        logging.warning("Ooops, didn't add all the vars I wanted to")
+        logging.warning("Oops, didn't add all the vars I wanted to")
     else:
         logging.info("Added all the variables we expected")
 
     ecu.bind()
 
-    log_handler = log_memory(cfg.logs["filename"], cfg.logs["log_line_cache"], time_delay, cfg.logs["verbose"])
+    log_handler = log_memory(cfg.logs['csv_filename'], cfg.logs["filename"], cfg.logs["log_line_cache"],
+                             time_delay, cfg.logs['csv_required'], cfg.logs["verbose"])
 
     while 1:
         # get fresh can data or not!
