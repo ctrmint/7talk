@@ -62,7 +62,7 @@
 
   "RPM": {
     "max_rpm": 7700,
-    "rpm_delay": 2000,
+    "shift_bar_lower_rpm": 6000,
     "band1":2500,
     "band2":6600,
     "band3":7500,

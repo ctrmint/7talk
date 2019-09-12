@@ -20,22 +20,23 @@
 #       data_txt_as_list = list of instances of DataText, used to print data on the screen.
 # ----------------------------------------------------------------------------------------------------------------------
 
-import os, sys, time, datetime, random, binascii, struct, json, socket
-from dash_support import *
-from colours import *
+import random, struct, json, socket
+#from dash_support import *
+#from colours import *
 from gauges_text import *
 from pygame.locals import *
 from candata import *
 from types import SimpleNamespace
 
-def pygame_setup(cfg):
-    pygame.init()                                                 # Init pygame
-    pygame.font.init()                                            # Init pygame fonts
-    pygame.mixer.quit()                                           # BUG FIX, Quitting mixer stops it from hogging cpu!!!
 
-    POLLCAN = pygame.USEREVENT + 1                                      # Pygame event for CANBus
-    pygame.time.set_timer(POLLCAN, cfg.Timers['PollCAN_schedule'])      #  weird still required!
-    clock = pygame.time.Clock()                                         # Setup PG clock, critical component to runtime.
+def pygame_setup(cfg):
+    pygame.init()  # Init pygame
+    pygame.font.init()  # Init pygame fonts
+    pygame.mixer.quit()  # BUG FIX, Quitting mixer stops it from hogging cpu!!!
+
+    POLLCAN = pygame.USEREVENT + 1  # Pygame event for CANBus
+    pygame.time.set_timer(POLLCAN, cfg.Timers['PollCAN_schedule'])  # weird still required!
+    clock = pygame.time.Clock()  # Setup PG clock, critical component to runtime.
 
     # sort display surface
     gameDisplay = pygame.display.set_mode((cfg.Display['width'], cfg.Display['height']))
@@ -63,12 +64,13 @@ def pygame_setup(cfg):
     return hack_font, rpmFont, labelFont, dataFont, gameDisplay, windowSurface, clock
 
 
-def demo_rpm(demo_rpm_val):
+def demo_rpm(demo_rpm_val, max_rpm):
     if demo_rpm_val < max_rpm:
         demo_rpm_val += 25
     else:
         demo_rpm_val = 0
     return demo_rpm_val
+
 
 def draw_screen_borders(windowSurface):
     middle_line = 355
@@ -103,6 +105,7 @@ def draw_screen_borders(windowSurface):
     pygame.draw.line(windowSurface, MAIN_BORDER_COLOUR, (x1, y4), (display_width, y4), 1)
     return
 
+
 def processing_loop(sock, cfg):
     hack_font, rpmFont, labelFont, dataFont, gameDisplay, windowSurface, clock = pygame_setup(cfg)
 
@@ -110,10 +113,10 @@ def processing_loop(sock, cfg):
 
     # Control parameters
     pending_data = True
-    keep_running = True                                         # ensures continued operation, set false in flow to stop
-    demo_loop = False                                           # runs demo data, set through keyboard
-    random_loop = False                                         # runs random data, set through keyboard
-    demo_rpm_val = 0                                            # initial value for demo data.
+    keep_running = True  # ensures continued operation, set false in flow to stop
+    demo_loop = False  # runs demo data, set through keyboard
+    random_loop = False  # runs random data, set through keyboard
+    demo_rpm_val = 0  # initial value for demo data.
 
     # setup screen layout, borders etc
     draw_screen_borders(windowSurface)
@@ -123,7 +126,7 @@ def processing_loop(sock, cfg):
                             ([RPM_LSB_TXT, TEXT_BG]), [420, 160])
 
     # declare rpm gauge instance and display bar for zero value
-    rpm_bar = DisplayBarGauge("rpm", 0, cfg.RPM['max_rpm'], windowSurface,
+    rpm_bar = DisplayBarGauge("rpm", 0, (cfg.RPM['shift_bar_lower_rpm'], cfg.RPM['max_rpm']), windowSurface,
                               ([cfg.Images['rev_image1'], cfg.Images['rev_image2'], cfg.Images['rev_image1'],
                                 cfg.Images['rev_image_shift']]), GEN_BACKGROUND, ([10, 15]),
                               (cfg.RPM['band1'], cfg.RPM['band2'], cfg.RPM['band3']))
@@ -136,18 +139,18 @@ def processing_loop(sock, cfg):
                                     False, True)
 
     #  ---------------------------------------------------------    __ Display related lists __
-    reference_display_table_labels = []                     # Simple reference lookup table, easy check to
-                                                            # see if the table has been seen before.
-    display_table_labels = []                               # List of label objects from class.
-    display_table_readings = []                             # List of text objects relating to the data displayed
+    reference_display_table_labels = []  # Simple reference lookup table, easy check to
+    # see if the table has been seen before.
+    display_table_labels = []  # List of label objects from class.
+    display_table_readings = []  # List of text objects relating to the data displayed
     # ----------------------------------------------------------------------------------------------------------------
-    data_points = []                                        # List of Can_vals per value type received.  List
-                                                            # attributes are updated to reflect each new packet
+    data_points = []  # List of Can_vals per value type received.  List
+    # attributes are updated to reflect each new packet
 
-    rpm_reading = Rpmval("rpm", 0)                          # Instantiate  RPM reading (Can_val) object.
-                                        # RPM operates at a higher frequency and as a result has been separated for ease.
+    rpm_reading = Rpmval("rpm", 0)  # Instantiate  RPM reading (Can_val) object.
+    # RPM operates at a higher frequency and as a result has been separated for ease.
 
-    while keep_running:                                     # Now start core loop used during reception.
+    while keep_running:  # Now start core loop used during reception.
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -171,7 +174,7 @@ def processing_loop(sock, cfg):
                 if event.key == K_RIGHT:
                     random_loop = False
                     demo_loop = False
-                    rpm_reading.wipe()    #needs to fixed!!!!!
+                    rpm_reading.wipe()  # needs to fixed!!!!!
                 if event.key == K_LSHIFT:
                     random_loop = False
                     demo_loop = True
@@ -183,11 +186,10 @@ def processing_loop(sock, cfg):
                 rpm_dial_gauge.draw_wiper_arc()
 
             if demo_loop:
-                rpm_reading.rx_val = demo_rpm(rpm_reading.rx_val)
+                rpm_reading.rx_val = demo_rpm(rpm_reading.rx_val, cfg.RPM['max_rpm'])
 
             if random_loop:
-                rpm_reading.rx_val = random.randint(1, 7700)
-
+                rpm_reading.rx_val = random.randint(1, cfg.RPM['max_rpm'])
 
             # bug fix to stop zero values from the keyboard.  -- code improvement needed
             if rpm_reading.rx_val < 0:
@@ -218,49 +220,50 @@ def processing_loop(sock, cfg):
         data_label = str(unpacked_data[1].decode("utf-8")).rstrip()
         data_value = int(unpacked_data[2])
 
-        if data_label == "Engine Speed":                                  # is data engine speed, if so
-            rpm_reading.set_change(unpacked_data[2])                      # update dedicated engine speed
+        if data_label == "Engine Speed":  # is data engine speed, if so
+            rpm_reading.set_change(unpacked_data[2])  # update dedicated engine speed
 
         else:
-           # if len(reference_display_table_labels) < 10:                    # Capture the labels from the stream of data
-            if data_label not in reference_display_table_labels:               # if not in list
+            # if len(reference_display_table_labels) < 10:
+            # Capture the labels from the stream of data
+            if data_label not in reference_display_table_labels:  # if not in list
 
                 # create the labels here for each value here.
-                reference_display_table_labels.append(data_label)              # add to list.
+                reference_display_table_labels.append(data_label)  # add to list.
                 x = cfg.Tables['table_start_x']
                 y = cfg.Tables['table_start_y'] + (len(reference_display_table_labels) * cfg.Tables['table_inc_y'])
                 display_table_labels.append(LabelText(data_label, windowSurface, data_label,
-                                                          DARK_GREEN, TEXT_BG, labelFont, x, y))
+                                                      DARK_GREEN, TEXT_BG, labelFont, x, y))
 
                 # repeat similar process here, for the data values.
                 display_table_readings.append(DataText(data_label, windowSurface, data_value, GREEN, TEXT_BG,
-                                                       dataFont, (x+cfg.Tables['table_value_offset']), y))
+                                                       dataFont, (x + cfg.Tables['table_value_offset']), y))
 
-                data_points.append(Can_val(data_label, data_value))    #instantiate instance of class for new data label
+                data_points.append(Can_val(data_label, data_value))  # instantiate instance of class for new data label
 
             # we have a full list of labels and prior data, so we need to update the screen value with the current
             # data value
 
-            for item in display_table_readings:             # run through display table readings and look for
-                if item.name == data_label:                 # instance name matching current data
-                    item.update(data_value)                 # if match update the screen label.
+            for item in display_table_readings:  # run through display table readings and look for
+                if item.name == data_label:  # instance name matching current data
+                    item.update(data_value)  # if match update the screen label.
 
-            for item in data_points:                        # add new data point to appropriate Can_val instance in list
+            for item in data_points:  # add new data point to appropriate Can_val instance in list
                 if item.name == data_label:
                     item.set_change(data_value)
-        pygame.display.update()                             # Update the Pygame display.
+        pygame.display.update()  # Update the Pygame display.
     return
 
-def main():
 
-    with open('server_cfg.txt') as json_data_file:                            # Open configuration file
-        cfg_vals = json.load(json_data_file)                                  # load json data
-    cfg = SimpleNamespace(**cfg_vals)                                         # namespace object from json
+def main():
+    with open('server_cfg.txt') as json_data_file:  # Open configuration file
+        cfg_values = json.load(json_data_file)  # load json data
+    cfg = SimpleNamespace(**cfg_values)  # namespace object from json
 
     print(cfg.App['name'])
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                                      # create server socket
-    svr_addr = (cfg.UDP_Dash['host'], cfg.UDP_Dash['port'])                                       # bind socket to port
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create server socket
+    svr_addr = (cfg.UDP_Dash['host'], cfg.UDP_Dash['port'])  # bind socket to port
     try:
         sock.bind(svr_addr)
         print(str(sock))
@@ -269,6 +272,7 @@ def main():
         print("Oops - Something went wrong")
     if sock:
         processing_loop(sock, cfg)
+
 
 if __name__ == '__main__':
     main()

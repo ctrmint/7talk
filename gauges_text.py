@@ -213,16 +213,19 @@ class DisplayBarGauge(object):
         This bar works horizontally.
     """
 
-    def __init__(self, name, data_value, max_data_value, wsurface, image_list, mask_colour, image_xy_list, limits):
-
+    def __init__(self, name, data_value, range, wsurface, image_list, mask_colour, image_xy_list, limits):
         self.name = name                                               # A arbitrary name for the object.
         self.data = data_value                                         # Data value to be plotted
-        self.max_data_value = max_data_value                           # The maximum value observed in the data value
+        self.start_value = range[0]
+        self.max_data_value = range[1]                                 # The maximum value observed in the data value
         self.windowsSurface = wsurface                                 # Target Pygame surface
         self.image_list = image_list                                   # Supplied list of images to use
         self.mask_colour = mask_colour                                 # Mask colour should always be background colour
         self.image_xy = image_xy_list                                  # Location of where to draw the rect/images
         self.limits = limits
+
+        self.adjusted_range = self.max_data_value - self.start_value
+
         # Load the listed images into a list of loaded images for use.
         # Use of images would be .... self.windowsSurface.blit(self.loaded_images[2], (100, 100))
         self.loaded_images = []
@@ -240,9 +243,15 @@ class DisplayBarGauge(object):
         self.updatebar(self.data)
 
     def updatebar(self, data):
-        self.data = data
-        # calculate the mask_end_x as data/max_data
-        mask_end_x = 0 - (self.mask_rect[0] - ((self.data/self.max_data_value) * self.mask_rect[0]))
+        if data > self.start_value:
+            adjusted_data = data - self.start_value
+            self.data = data
+            # calculate the mask_end_x as data/max_data
+            mask_end_x = 0 - (self.mask_rect[0] - ((adjusted_data / self.adjusted_range) * self.mask_rect[0]))
+
+        else:           # basically igore condition, but requires mask_end_x setting to -790 or similar.
+            mask_end_x = 0 - (self.mask_rect[0] - ((0/self.max_data_value) * self.mask_rect[0]))
+
         # set mask rectangle coordinates
         mask_rectangle = Rect(self.mask_start_x, self.mask_start_y, mask_end_x, self.mask_end_y)
         # Set which image is displayed based on data value
