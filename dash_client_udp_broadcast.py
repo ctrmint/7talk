@@ -38,16 +38,12 @@ class DataPacket(object):
         packed_msg = self.fmt.pack(*value)
         self.transmit(packed_msg, host, port)
 
-    def transmit(self, payload, host, port):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) #creating socket with these two lines
+    def transmit(self, payload, host, port):             # revised broadcast solution, host not required, needs removing
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.settimeout(1)
-        #sock.bind(("", port))
-        #while True:
-        print(str(payload))
         sock.sendto(payload, ('<broadcast>', port))
-            #time.sleep(0.2)
         return
 
     def __str__(self):

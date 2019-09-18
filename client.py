@@ -17,12 +17,11 @@
 import binascii, struct, sys, argparse, logging, csv, pprint, math
 import mbe                                                     # coded by John Martin / PurpleMeanie, forked slightly
 from dash_support import *
-from dash_client_udp import *
+from dash_client_udp_broadcast import *
 from logs import log_memory
 from time import sleep
 import json
 from types import SimpleNamespace
-
 
 
 def main():
